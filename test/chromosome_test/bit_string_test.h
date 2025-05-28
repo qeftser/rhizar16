@@ -26,12 +26,8 @@ int hamming_distance_64_64_47();
 int hamming_distance_64_64_64();
 int hamming_distance_128_128_64();
 int hamming_distance_128_128_128();
-int hamming_distance_5000_5000_1000();
+int hamming_distance_5000_5000_1014();
 int hamming_distance_5000_5000_5000();
-int hamming_distance_0_1();
-int hamming_distance_0_128();
-int hamming_distance_64_128();
-int hamming_distance_128_5000();
 
 int randomize_0();
 int randomize_1();

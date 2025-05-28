@@ -5,11 +5,11 @@ target_sources(base
 
    PRIVATE
    ${CMAKE_CURRENT_LIST_DIR}/uniform_rand.cpp
-   ${CMAKE_CURRENT_LIST_DIR}/bit_string.cpp
+   ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/uniform_rand.h
-   ${CMAKE_CURRENT_LIST_DIR}/bit_string.h
+   ${CMAKE_CURRENT_LIST_DIR}/utils.h
 
 )
 

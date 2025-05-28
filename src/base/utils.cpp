@@ -1,21 +1,7 @@
 
-#include "bit_string.h"
-#include "uniform_rand.h"
-#include <cstring>
+#include "utils.h"
 
-namespace Rhizar16 {
-
-BitString::BitString(int n) {
-   length = n >> 6;
-   bits = n;
-   values = new uint64_t[length];
-}
-
-BitString::~BitString() {
-   delete values;
-}
-
-uint64_t BitString::bitmask(int n) {
+uint64_t bitmask(int n) {
    switch (n) {
       case 0:
          return 0x0000000000000000;
@@ -150,62 +136,3 @@ uint64_t BitString::bitmask(int n) {
    }
 }
 
-int BitString::hamming_distance(const BitString & bs1, const BitString & bs2) {
-   int retval = 0;
-
-   int length = (bs1.length < bs2.length ? bs1.length : bs2.length);
-
-   /* use the builtin popcount intrinsic if it is avaliable */
-#if (defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)) && __has_builtin(__builtin_popcountll)
-
-   for (int i = 0; i < length; ++i)
-      retval += __builtin_popcountll(bs1.values[i] ^ bs2.values[i]);
-
-#else
-
-   for (int i = 0; i < length; ++i) {
-      int nv = bs1.values[i] ^ bs2.values[i];
-
-      for (int j = 0; j < 16; ++j) {
-         switch (nv) {
-            case 0x0:
-               break;
-            case 0x1:
-            case 0x2:
-            case 0x4:
-            case 0x8:
-               nv += 1;
-               break;
-            case 0x3:
-            case 0x5:
-            case 0x9:
-            case 0x6:
-            case 0xa:
-            case 0xc:
-               nv += 2;
-            case 0x7:
-            case 0xb:
-            case 0xe:
-            case 0xd:
-               nv += 3;
-            case 0xf:
-               nv += 4;
-         }
-         nv >>= 4;
-      }
-
-   }
-
-#endif
-
-   return retval;
-}
-
-void BitString::randomize() {
-   static UniformRand rnd = UniformRand();
-
-   for (int i = 0; i < length; ++i)
-      values[i] = rnd.random();
-}
-
-}
