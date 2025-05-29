@@ -9,6 +9,11 @@ target_sources(selection
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/selection.h
+   ${CMAKE_CURRENT_LIST_DIR}/roulette_selection.h
+   ${CMAKE_CURRENT_LIST_DIR}/random_selection.h
+   ${CMAKE_CURRENT_LIST_DIR}/rank_selection.h
+   ${CMAKE_CURRENT_LIST_DIR}/tournament_selection.h
+   ${CMAKE_CURRENT_LIST_DIR}/stochastic_selection.h
 
 )
 
