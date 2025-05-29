@@ -1,6 +1,8 @@
 
 #include "utils.h"
 
+namespace Rhizar16 {
+
 uint64_t bitmask(int n) {
    switch (n) {
       case 0:
@@ -134,5 +136,20 @@ uint64_t bitmask(int n) {
       default:
          return 0xffffffffffffffff;
    }
+}
+
+void print_logo() {
+
+   printf("\033[31m░▒▓███████▓▒░ \033[90m  ░▒▓█▓▒░░▒▓███████▓▒░ \n");
+   printf("\033[31m░▒▓█▓▒░░▒▓█▓▒░\033[90m▒▓████▓▒░▒▓█▓▒░        \n");
+   printf("\033[31m░▒▓█▓▒░░▒▓█▓▒░\033[90m  ░▒▓█▓▒░▒▓█▓▒░        \n");
+   printf("\033[31m░▒▓███████▓▒░ \033[90m  ░▒▓█▓▒░▒▓███████▓▒░  \n");
+   printf("\033[31m░▒▓█▓▒░░▒▓█▓▒░\033[90m  ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ \n");
+   printf("\033[31m░▒▓█▓▒░░▒▓█▓▒░\033[90m  ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ \n");
+   printf("\033[31m░▒▓█▓▒░░▒▓█▓▒░\033[90m  ░▒▓█▓▒░░▒▓██████▓▒░  \n");
+   printf(" I will continue when you are gone\033[0m\n");
+
+}
+                                     
 }
 

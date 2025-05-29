@@ -483,15 +483,19 @@ void Population<T>::perform_evolution(int pool_size) {
 
    next_generation->end = popsize;
 
-   /* copy the best values over given elitism. Note that 
-    * this assumes that values are still sorted from before */
-   T * temp;
-   for (int i = 0; i < elitism; ++i) {
+   if (elitism) {
+      /* ensure population is sorted */
+      sort_population();
 
-      temp = ((Chromosome<T> **)curr_generation->data)[i]->value;
-      ((Chromosome<T> **)curr_generation->data)[i]->value = ((Chromosome<T> **)next_generation->data)[i]->value;
-      ((Chromosome<T> **)next_generation->data)[i]->value = temp;
+      /* copy the best values over given elitism. */
+      T * temp;
+      for (int i = 0; i < elitism; ++i) {
 
+         temp = ((Chromosome<T> **)curr_generation->data)[i]->value;
+         ((Chromosome<T> **)curr_generation->data)[i]->value = ((Chromosome<T> **)next_generation->data)[i]->value;
+         ((Chromosome<T> **)next_generation->data)[i]->value = temp;
+
+      }
    }
 }
 
@@ -499,9 +503,6 @@ template<typename T>
 void Population<T>::simulate(int iterations) {
 
    while (!finished() && iterations-- != 0) {
-
-      /* ensure population is sorted */
-      sort_population();
 
       /* call all before functions, potentially reducing the size of the mating pool */
       int pool_size = curr_generation->end;

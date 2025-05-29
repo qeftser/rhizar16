@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+namespace Rhizar16 {
+
 /* print an error statement */
 template<typename ... Args>
 void RHIZAR16_ERROR(char * str, Args&&... args) {
@@ -23,5 +25,10 @@ void RHIZAR16_WARN(char * str, Args&&... args) {
 
 /* return a bitmask of length n bits */
 uint64_t bitmask(int n);
+
+/* print the logo xD */
+void print_logo();
+
+}
 
 #endif

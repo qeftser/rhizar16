@@ -656,6 +656,7 @@ int TestPopulation::finished_0() {
 int TestPopulation::finished_1() {
 
    PopulationOptions pop;
+   bzero(&pop,sizeof(PopulationOptions));
    pop.population_size = 100;
    pop.maximum_generation = 10;
    pop.maximum_elapsed = 1;
@@ -675,6 +676,7 @@ int TestPopulation::finished_1() {
 int TestPopulation::finished_2() {
 
    PopulationOptions pop;
+   bzero(&pop,sizeof(PopulationOptions));
    pop.population_size = 100;
    pop.maximum_generation = 10;
    pop.maximum_elapsed = 1;
@@ -1287,6 +1289,7 @@ int TestPopulation::simulate_0() {
    p.set_evolution(s.as_function());
 
    p.initialize(test_population_count_10);
+   p.sort_population();
    p.simulate(1);
 
    int retval = 1;
@@ -1314,6 +1317,7 @@ int TestPopulation::simulate_1() {
    p.set_evolution(s.as_function());
 
    p.initialize(test_population_count_10);
+   p.sort_population();
    p.simulate();
 
    int retval = 1;
@@ -1344,6 +1348,7 @@ int TestPopulation::simulate_2() {
    p.set_evolution(s.as_function());
 
    p.initialize(test_population_count_10);
+   p.sort_population();
    p.simulate();
 
    int retval = 1;

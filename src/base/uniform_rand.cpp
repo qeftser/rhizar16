@@ -1,11 +1,11 @@
 
 #include "uniform_rand.h"
-#include <ctime>
+#include <stdlib.h>
 
 namespace Rhizar16 {
 
 UniformRand::UniformRand() {
-   seed_value = time(NULL) * clock();
+   seed_value = arc4random();
    generator = std::mt19937_64(seed_value);
 }
 

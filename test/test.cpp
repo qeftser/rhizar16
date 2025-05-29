@@ -1,10 +1,11 @@
 
-#include <cstdio>
-#include <ctime>
 #include "bit_string_test.h"
 #include "uniform_rand_test.h"
 #include "population_test.h"
 #include "selection_test.h"
+
+#include <stdio.h>
+#include <time.h>
 
 int total_tests = 0;
 int passed_tests = 0;
@@ -19,6 +20,8 @@ do {                                                                            
 } while(0)
 
 int main(void) {
+
+   Rhizar16::print_logo();
 
    int tStart = clock();
 
@@ -139,6 +142,49 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestPopulation::simulate_6());
    __RHIZAR16_TEST(Rhizar16::TestPopulation::simulate_7());
    __RHIZAR16_TEST(Rhizar16::TestPopulation::simulate_8());
+
+   /* ===========================================================
+    * BitString reproduction tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestBitString::single_point_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::single_point_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::single_point_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::single_point_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_4());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_5());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_6());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_7());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::two_point_crossover_8());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::uniform_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::uniform_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::uniform_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::uniform_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_4());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_5());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::three_parent_crossover_6());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::shuffle_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::shuffle_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::shuffle_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::shuffle_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::shuffle_crossover_4());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::flip_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::flip_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::flip_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::flip_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::flip_4());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_4());
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 
