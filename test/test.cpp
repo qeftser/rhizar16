@@ -3,6 +3,7 @@
 #include "uniform_rand_test.h"
 #include "population_test.h"
 #include "selection_test.h"
+#include "file_opts_test.h"
 
 #include <stdio.h>
 #include <time.h>
@@ -185,6 +186,88 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_2());
    __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_3());
    __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_4());
+
+   /* ===========================================================
+    * FileOpts tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::initialization_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_4());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_5());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_6());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_7());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_8());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_9());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_a());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_b());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_c());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_d());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_e());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_f());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_g());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_h());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_i());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_j());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_k());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_l());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_m());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_n());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_o());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_p());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::load_q());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_4());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_5());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_int_6());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_4());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_5());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_flt_6());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_str_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_str_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_str_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_str_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_str_4());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::getopt_str_5());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_section_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_section_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_section_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_section_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_key_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_key_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_key_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_key_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_key_4());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::has_key_5());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_4());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_5());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_6());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_7());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_8());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_9());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_a());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::save_b());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_sections_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_sections_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_sections_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_0());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_1());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_2());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_3());
+   __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_4());
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 

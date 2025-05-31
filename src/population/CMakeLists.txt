@@ -6,7 +6,7 @@ if (MSVC)
     add_compile_options(/W4)
 else()
     # additional warnings
-    add_compile_options(-Og -Wall -Wextra -Wpedantic)
+    add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 set_target_properties(population PROPERTIES LINKER_LANGUAGE CXX)
