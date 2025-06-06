@@ -4,6 +4,7 @@
 #include "population_test.h"
 #include "selection_test.h"
 #include "file_opts_test.h"
+#include "wired_test.h"
 
 #include <stdio.h>
 #include <time.h>
@@ -107,7 +108,6 @@ int main(void) {
    /* ===========================================================
     * Selection tests
     * =========================================================== */
-
    __RHIZAR16_TEST(Rhizar16::TestSelection::intialization_0());
    __RHIZAR16_TEST(Rhizar16::TestSelection::intialization_1());
    __RHIZAR16_TEST(Rhizar16::TestSelection::selection_0());
@@ -268,6 +268,82 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_2());
    __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_3());
    __RHIZAR16_TEST(Rhizar16::TestFileOpts::collect_keys_4());
+
+   /* ===========================================================
+    * Wired tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_initialization_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_initialization_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_initialization_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_initialization_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_initialization_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_initialization_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_open_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_open_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_open_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_open_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_open_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_open_5());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_start_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_start_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_start_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_connect_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_connect_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_connect_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_connect_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_connect_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_connect_5());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_5());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_close_6());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_send_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_send_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_send_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_5());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_6());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_link_is_live_7());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_ready_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_ready_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_ready_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_wait_ready_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_wait_ready_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_ready_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_wait_ready_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_wait_ready_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_closed_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_closed_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_closed_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_get_closed_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_clean_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_clean_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_clean_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_clean_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_close_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_close_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_clean_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_5());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_recv_6());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_3());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_4());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_5());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_6());
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 

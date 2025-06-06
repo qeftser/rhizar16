@@ -14,6 +14,7 @@ add_subdirectory(chromosome_test)
 add_subdirectory(selection_test)
 add_subdirectory(population_test)
 add_subdirectory(file_test)
+add_subdirectory(wired_test)
 
 target_link_libraries(test 
    PRIVATE
@@ -22,4 +23,5 @@ target_link_libraries(test
    selection selection_test
    population population_test
    file file_test
+   wired wired_test
 )
