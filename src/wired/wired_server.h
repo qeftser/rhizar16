@@ -22,6 +22,14 @@
  * in a class.                                                   */
 
 #ifdef _WIN32
+typedef unsigned int uint;
+
+#include <winsock2.h>
+#include <winsock.h>
+#include <windows.h>
+#include <ws2def.h>
+#include <ws2ipdef.h>
+#include <ws2tcpip.h>
 
 #elif defined(__unix__)
 
@@ -42,6 +50,8 @@ class WiredServer {
 public:
 
 #ifdef _WIN32
+
+   typedef SOCKET socktype;
 
 #elif defined(__unix__)
 
@@ -84,6 +94,12 @@ private:
    void manage();
    
 #ifdef _WIN32
+
+   u_int connection_len;
+   u_int connection_pos;
+   WSAPOLLFD * connections;
+   SOCKET listen_ipv4 = INVALID_SOCKET;
+   SOCKET listen_ipv6 = INVALID_SOCKET;
 
 #elif defined(__unix__)
 

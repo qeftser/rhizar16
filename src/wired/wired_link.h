@@ -12,6 +12,14 @@
  * to be shared across as many devices as possible.      */
 
 #ifdef _WIN32
+typedef unsigned int uint;
+
+#include <winsock2.h>
+#include <winsock.h>
+#include <windows.h>
+#include <ws2def.h>
+#include <ws2ipdef.h>
+#include <ws2tcpip.h>
 
 #elif defined(__unix__)
 
@@ -36,6 +44,14 @@ private:
    bool is_live;
 
 #ifdef _WIN32
+
+   SOCKET sock = 0;
+   int protocol;
+
+   union {
+      SOCKADDR_IN   ipv4;
+      SOCKADDR_IN6 ipv6;
+   } addr;
 
 #elif defined(__unix__)
 
