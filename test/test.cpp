@@ -11,15 +11,21 @@
 
 int total_tests = 0;
 int passed_tests = 0;
+int ignored_tests = 0;
 
 #define __RHIZAR16_TEST(funcall)                                                           \
 do {                                                                                       \
    total_tests += 1;                                                                       \
    int res = (funcall);                                                                    \
-   if (res)                                                                                \
+   if (res == 1)                                                                           \
       passed_tests += 1;                                                                   \
-   printf("[%s]: %s\n",res ? "\033[32mPASSED\033[0m" : "\033[31mFAILED\033[0m", #funcall); \
+   else if (res)                                                                           \
+      ignored_tests += 1;                                                                  \
+   printf("[%s]: %s\n",res ?                                                               \
+                      (res == 1 ? "\033[32mPASSED\033[0m" : "\033[33mIGNORE\033[0m") :     \
+                      "\033[31mFAILED\033[0m", #funcall);                                  \
 } while(0)
+
 
 int main(void) {
 
@@ -349,7 +355,7 @@ int main(void) {
 
    printf("============================================================================\n");
    printf("Ran %d tests in %f seconds. Results: %d passing, %d failing\n",
-           total_tests,elapsed,passed_tests,total_tests - passed_tests);
+           total_tests,elapsed,passed_tests,total_tests - passed_tests - ignored_tests);
    printf("============================================================================\n");
 
    return 0;

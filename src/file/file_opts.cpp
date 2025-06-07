@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#ifdef _WIN32
+typedef unsigned int uint;
+#endif
 
 namespace Rhizar16 {
 
@@ -108,7 +111,7 @@ void FileOptions::load_ini(std::string path) {
                   internal_status = NO_MEM;
                   goto finally;
                }
-               bzero(curr_section,sizeof(struct FileSection));
+               memset(curr_section,0,sizeof(struct FileSection));
 
                curr_section->name = (char *)malloc(sizeof(char)*hsize+sizeof('\0'));
                if (curr_section->name == NULL) {
@@ -175,7 +178,7 @@ void FileOptions::load_ini(std::string path) {
                   internal_status = NO_MEM;
                   goto finally;
                }
-               bzero(curr_keyvalue,sizeof(struct FileKV));
+               memset(curr_keyvalue,0,sizeof(struct FileKV));
 
                curr_keyvalue->key = (char *)malloc(sizeof(char)*ksize + sizeof('\0'));
                if (curr_keyvalue->key == NULL) {
@@ -357,7 +360,7 @@ void FileOptions::load_json(std::string path) {
                   internal_status = NO_MEM;
                   goto finally;
                }
-               bzero(curr_section,sizeof(struct FileSection));
+               memset(curr_section,0,sizeof(struct FileSection));
 
                curr_section->name = (char *)malloc(sizeof(char)*hsize+sizeof('\0'));
                if (curr_section->name == NULL) {
@@ -431,7 +434,7 @@ void FileOptions::load_json(std::string path) {
                   internal_status = NO_MEM;
                   goto finally;
                }
-               bzero(curr_keyvalue,sizeof(struct FileKV));
+               memset(curr_keyvalue,0,sizeof(struct FileKV));
 
                curr_keyvalue->key = (char *)malloc(sizeof(char)*ksize + sizeof('\0'));
                if (curr_keyvalue->key == NULL) {

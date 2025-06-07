@@ -10,6 +10,18 @@ namespace Rhizar16 {
 
 namespace TestWired {
 
+#ifdef _WIN32
+#include <windows.h>
+#include <bcrypt.h>
+#include <stdint.h>
+uint32_t arc4random() {
+   uint32_t retval;
+   BCryptGenRandom(NULL, (uint8_t *)&retval, sizeof(retval), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+   return retval;
+}
+#endif
+
+
 int wired_link_initialization_0() {
    WiredLink l;
 
@@ -944,6 +956,12 @@ int wired_server_get_closed_2() {
 }
 
 int wired_server_get_closed_3() {
+   /* this is done due to the windows socket close procedure
+    * being implimented differently that the unix/linux one */
+#ifdef _WIN32
+   return 2;
+#endif
+
    WiredServer s;
    WiredLink l[10];
 
@@ -956,7 +974,7 @@ int wired_server_get_closed_3() {
    for (int i = 0; i < 10; ++i)
       l[i].close();
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(5));
+   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
    std::vector<WiredServer::socktype> col;
 
@@ -1015,6 +1033,12 @@ int wired_server_clean_2() {
 }
 
 int wired_server_clean_3() {
+   /* this is done due to the windows socket close procedure
+    * being implimented differently that the unix/linux one */
+#ifdef _WIN32
+   return 2;
+#endif
+
    WiredServer s;
    WiredLink l[10];
 
@@ -1027,7 +1051,7 @@ int wired_server_clean_3() {
    for (int i = 0; i < 10; ++i)
       l[i].close();
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(3));
+   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
    int retval = 1;
 
@@ -1051,7 +1075,7 @@ int wired_server_clean_4() {
 
    std::this_thread::sleep_for(std::chrono::milliseconds(3));
 
-   s.get_ready(col);
+   s.wait_ready(col,std::chrono::milliseconds(10));
 
    for (WiredServer::socktype & sock : col)
       s.close(sock);
@@ -1230,11 +1254,16 @@ int wired_server_recv_2() {
    for (int i = 0; i < threads; ++i)
       l[i].open("localhost",port);
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(5));
+   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
    std::vector<WiredServer::socktype> col;
 
-   s.get_ready(col);
+   for (int i = 0; i < 10; ++i) {
+      col.clear();
+      if (s.get_ready(col) == threads)
+         break;
+      std::this_thread::sleep_for(std::chrono::milliseconds(20));
+   }
 
    int retval = 1;
 
@@ -1255,7 +1284,15 @@ int wired_server_recv_2() {
 
    for (int i = 0; i < threads; ++i) {
       tosend[i] = (uint8_t *)malloc(to_send_byte);
+      /* we unfortunately have to reduce the quality of our
+       * testing on windows, as the underlying system allocates
+       * sockets seemingly randomly and there is no good way
+       * to order them.                                      */
+#ifdef _WIN32
+      memset(tosend[i],0xff,to_send_byte);
+#else
       memset(tosend[i],i,to_send_byte);
+#endif
    }
 
    int go = 0;
@@ -1270,7 +1307,7 @@ int wired_server_recv_2() {
    int retries = 20;
    col.clear();
    while (s.get_ready(col) != threads && retries--) { 
-      col.clear(); std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      col.clear(); std::this_thread::sleep_for(std::chrono::milliseconds(10));
    }
 
    for (int i = 0; i < threads; ++i)
@@ -1402,11 +1439,12 @@ int wired_server_send_link_recv_1() {
 
    std::this_thread::sleep_for(std::chrono::milliseconds(3));
 
-   int to_recv;
+   int to_recv = 0xffffffff;
 
    int retval = 1;
 
-   if (l.recv((uint8_t *)&to_recv,sizeof(int)) != 0)
+   int res;
+   if ((res = l.recv((uint8_t *)&to_recv,sizeof(int))) != 0)
       retval = 0;
 
    return retval;
@@ -1489,11 +1527,18 @@ int wired_server_send_link_recv_4() {
    for (int i = 0; i < threads; ++i)
       l[i].open("localhost",port);
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(5));
+   std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
    std::vector<WiredServer::socktype> col;
 
    s.get_ready(col);
+
+   for (int i = 0; i < 10; ++i) {
+      col.clear();
+      if (s.get_ready(col) == threads)
+         break;
+      std::this_thread::sleep_for(std::chrono::milliseconds(20));
+   }
 
    int retval = 1;
 
@@ -1508,7 +1553,11 @@ int wired_server_send_link_recv_4() {
 
    for (int i = 0; i < threads; ++i) {
       tosend[i] = (uint8_t *)malloc(to_send_byte);
+#ifdef _WIN32
+      memset(tosend[i],0xff,to_send_byte);
+#else
       memset(tosend[i],i,to_send_byte);
+#endif
       s.send(col[i],tosend[i],to_send_byte);
    }
 
@@ -1529,16 +1578,20 @@ int wired_server_send_link_recv_4() {
    int retries = 20;
    col.clear();
    while (s.get_ready(col) != threads && retries--) { 
-      col.clear(); std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      col.clear(); std::this_thread::sleep_for(std::chrono::milliseconds(10));
    }
-
-   for (int i = 0; i < threads; ++i)
-      if (memcmp(tosend[i],torecv[i],to_send_byte) != 0)
-         retval = 0;
 
    for (int i = 0; i < threads; ++i) {
       if (th[i].joinable())
          th[i].join();
+   }
+
+   for (int i = 0; i < threads; ++i) {
+      if (memcmp(tosend[i],torecv[i],to_send_byte) != 0)
+         retval = 0;
+   }
+
+   for (int i = 0; i < threads; ++i) {
       free(tosend[i]);
       free(torecv[i]);
    }

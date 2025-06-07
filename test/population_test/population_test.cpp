@@ -638,7 +638,7 @@ int TestPopulation::retrieve_2() {
 int TestPopulation::finished_0() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(PopulationOptions));
+   memset(&pop,0,sizeof(PopulationOptions));
    pop.population_size = 100;
    pop.maximum_generation = 10;
    pop.maximum_elapsed = 1;
@@ -656,7 +656,7 @@ int TestPopulation::finished_0() {
 int TestPopulation::finished_1() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(PopulationOptions));
+   memset(&pop,0,sizeof(PopulationOptions));
    pop.population_size = 100;
    pop.maximum_generation = 10;
    pop.maximum_elapsed = 1;
@@ -676,7 +676,7 @@ int TestPopulation::finished_1() {
 int TestPopulation::finished_2() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(PopulationOptions));
+   memset(&pop,0,sizeof(PopulationOptions));
    pop.population_size = 100;
    pop.maximum_generation = 10;
    pop.maximum_elapsed = 1;
@@ -695,7 +695,7 @@ int TestPopulation::finished_2() {
 
 int test_population_add_before_dummy_func(Chromosome<int> ** pop, int length, void * arg) {
 
-   long addr = (long)(arg);
+   long addr = (long long)(arg);
 
    Chromosome<int> ** head = pop;
 
@@ -1055,7 +1055,7 @@ int TestPopulation::set_selection_1() {
 int TestPopulation::perform_evolution_0() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1087,7 +1087,7 @@ int TestPopulation::perform_evolution_0() {
 int TestPopulation::perform_evolution_1() {
    
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1128,7 +1128,7 @@ int TestPopulation::perform_evolution_1() {
 int TestPopulation::perform_evolution_2() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1160,7 +1160,7 @@ int TestPopulation::perform_evolution_2() {
 int TestPopulation::perform_evolution_3() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1192,7 +1192,7 @@ int TestPopulation::perform_evolution_3() {
 int TestPopulation::perform_evolution_4() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1232,7 +1232,7 @@ int TestPopulation::perform_evolution_4() {
 int TestPopulation::perform_evolution_5() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1278,7 +1278,7 @@ void test_population_count_10(int * chromosome) {
 int TestPopulation::simulate_0() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1305,7 +1305,7 @@ int TestPopulation::simulate_0() {
 int TestPopulation::simulate_1() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
    pop.maximum_generation = 100;
 
@@ -1336,7 +1336,7 @@ int TestPopulation::simulate_1() {
 int TestPopulation::simulate_2() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
    pop.maximum_elapsed = 0.01;
 
@@ -1387,7 +1387,7 @@ int test_population_add_1(Chromosome<int> ** pop, int length, void * arg) {
 int TestPopulation::simulate_3() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1416,7 +1416,7 @@ int TestPopulation::simulate_3() {
 int TestPopulation::simulate_4() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1452,7 +1452,7 @@ int test_population_set_poplen_5(Chromosome<int> ** pop, int length, void * arg)
 int TestPopulation::simulate_5() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
 
    Population<int> p = Population<int>(&pop);
@@ -1485,7 +1485,7 @@ int TestPopulation::simulate_5() {
 int TestPopulation::simulate_6() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
    pop.elitism_count = 3;
 
@@ -1523,7 +1523,7 @@ int TestPopulation::simulate_6() {
 int TestPopulation::simulate_7() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
    pop.max_fitness = 40.0;
 
@@ -1549,7 +1549,7 @@ int TestPopulation::simulate_7() {
 int TestPopulation::simulate_8() {
 
    PopulationOptions pop;
-   bzero(&pop,sizeof(pop));
+   memset(&pop,0,sizeof(pop));
    pop.population_size = 10;
    pop.min_fitness_change = 1.0;
 

@@ -396,15 +396,15 @@ void TestBitString::BitStringSimulation<N>::shuffle_crossover(BitString<N> ** co
 
    uint crosspoint = rnd[randpos++] % (N + 1);
 
-   bzero(children[0]->values,children[0]->length*sizeof(uint64_t));
-   bzero(children[1]->values,children[1]->length*sizeof(uint64_t));
+   memset(children[0]->values,0,children[0]->length*sizeof(uint64_t));
+   memset(children[1]->values,0,children[1]->length*sizeof(uint64_t));
    for (int i = 0; i < crosspoint; ++i) {
-      children[0]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
-      children[1]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
+      children[0]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
+      children[1]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
    }
    for (int i = crosspoint; i < N; ++i) {
-      children[0]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
-      children[1]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
+      children[0]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
+      children[1]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
    }
 }
 
@@ -419,7 +419,7 @@ void TestBitString::BitStringSimulation<N>::flip(BitString<N> * chromosome, uint
 
    for (uint i = 0; i < toflip; ++i) {
       unsigned flip_pos = rnd[randpos++] % N;
-      chromosome->values[flip_pos / 64] ^= (1L << flip_pos % 64);
+      chromosome->values[flip_pos / 64] ^= (1LL << flip_pos % 64);
    }
 
 }
@@ -433,15 +433,15 @@ void TestBitString::BitStringSimulation<N>::interchange(BitString<N> * chromosom
    unsigned toswap = 0;
    while (rnd[randpos++] < threshold && toswap < N) toswap += 1;
 
-   ulong bit0, bit1;
+   unsigned long long bit0, bit1;
    for (uint i = 0; i < toswap; ++i) {
       unsigned swap_0 = rnd[randpos++] % N;
       unsigned swap_1 = rnd[randpos++] % N;
       if (swap_0 == swap_1) continue;
       bit0 = (chromosome->values[swap_0 / 64] >> (swap_0 % 64)) & 1;
       bit1 = (chromosome->values[swap_1 / 64] >> (swap_1 % 64)) & 1;
-      chromosome->values[swap_0 / 64] &= ~(1L << (swap_0 % 64));
-      chromosome->values[swap_1 / 64] &= ~(1L << (swap_1 % 64));
+      chromosome->values[swap_0 / 64] &= ~(1LL << (swap_0 % 64));
+      chromosome->values[swap_1 / 64] &= ~(1LL << (swap_1 % 64));
       chromosome->values[swap_0 / 64] |= (bit1 << (swap_0 % 64));
       chromosome->values[swap_1 / 64] |= (bit0 << (swap_1 % 64));
    }
@@ -851,9 +851,9 @@ int TestBitString::uniform_crossover_2() {
    p[0] = &a; p[1] = &b;
    c[0] = &x;
 
-   bzero(a.values,sizeof(uint64_t)*5);
+   memset(a.values,0,sizeof(uint64_t)*5);
    memset(b.values,0xff,sizeof(uint64_t)*5);
-   bzero(x.values,sizeof(uint64_t)*5);
+   memset(x.values,0,sizeof(uint64_t)*5);
 
    uint64_t rnd[5] = { 0x1111111111111111, 0x2222222222222222,
                        0x4444444444444444, 0x8888888888888888,
@@ -889,8 +889,8 @@ int TestBitString::uniform_crossover_3() {
    c[0] = &x;
 
    memset(a.values,0xff,sizeof(uint64_t)*5);
-   bzero(b.values,sizeof(uint64_t)*5);
-   bzero(x.values,sizeof(uint64_t)*5);
+   memset(b.values,0,sizeof(uint64_t)*5);
+   memset(x.values,0,sizeof(uint64_t)*5);
 
    uint64_t rnd[5] = { 0x1111111111111111, 0x2222222222222222,
                        0x4444444444444444, 0x8888888888888888,
@@ -1173,9 +1173,9 @@ int TestBitString::shuffle_crossover_2() {
    p[0] = &a; p[1] = &b;
    c[0] = &x; c[1] = &y;
 
-   bzero(a.values,sizeof(uint64_t)*5);
-   bzero(x.values,sizeof(uint64_t)*5);
-   bzero(y.values,sizeof(uint64_t)*5);
+   memset(a.values,0,sizeof(uint64_t)*5);
+   memset(x.values,0,sizeof(uint64_t)*5);
+   memset(y.values,0,sizeof(uint64_t)*5);
    memset(b.values,0xff,sizeof(uint64_t)*5);
    uint8_t * setter = (uint8_t *)b.values;
    for (int i = 0; i < (320 / __RHIZAR16_BIT_PER_BYTE__); ++i)
@@ -1224,9 +1224,9 @@ int TestBitString::shuffle_crossover_3() {
    p[0] = &a; p[1] = &b;
    c[0] = &x; c[1] = &y;
 
-   bzero(a.values,sizeof(uint64_t)*5);
-   bzero(x.values,sizeof(uint64_t)*5);
-   bzero(y.values,sizeof(uint64_t)*5);
+   memset(a.values,0,sizeof(uint64_t)*5);
+   memset(x.values,0,sizeof(uint64_t)*5);
+   memset(y.values,0,sizeof(uint64_t)*5);
    memset(b.values,0xff,sizeof(uint64_t)*5);
    uint8_t * setter = (uint8_t *)b.values;
    for (int i = 0; i < (320 / __RHIZAR16_BIT_PER_BYTE__); ++i)
@@ -1275,9 +1275,9 @@ int TestBitString::shuffle_crossover_4() {
    p[0] = &a; p[1] = &b;
    c[0] = &x; c[1] = &y;
 
-   bzero(a.values,sizeof(uint64_t)*5);
-   bzero(x.values,sizeof(uint64_t)*5);
-   bzero(y.values,sizeof(uint64_t)*5);
+   memset(a.values,0,sizeof(uint64_t)*5);
+   memset(x.values,0,sizeof(uint64_t)*5);
+   memset(y.values,0,sizeof(uint64_t)*5);
    memset(b.values,0xff,sizeof(uint64_t)*5);
    uint8_t * setter = (uint8_t *)b.values;
    for (int i = 0; i < (320 / __RHIZAR16_BIT_PER_BYTE__); ++i)
@@ -1378,7 +1378,7 @@ int TestBitString::flip_2() {
 int TestBitString::flip_3() {
 
    BitString<320> a;
-   bzero(a.values,sizeof(uint64_t)*5);
+   memset(a.values,0,sizeof(uint64_t)*5);
 
    uint64_t rnd[11] = { 0, 0, 0, 0, 0, ULONG_MAX,
                         5, 70, 140, 200, 300 };
@@ -1404,7 +1404,7 @@ int TestBitString::flip_3() {
 int TestBitString::flip_4() {
 
    BitString<3> a;
-   bzero(a.values,sizeof(uint64_t));
+   memset(a.values,0,sizeof(uint64_t));
 
    uint64_t rnd[10] = { 0, 0, 0, 0, 0, 1, 2 };
 

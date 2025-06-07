@@ -11,6 +11,11 @@
 #include <limits.h>
 #include "uniform_rand.h"
 
+#ifdef _WIN32
+typedef unsigned  int  uint;
+typedef unsigned long ulong;
+#endif
+
 namespace Rhizar16 {
 
 /* A vector of bits to be manipulated individually */
@@ -240,12 +245,12 @@ void BitString<N>::shuffle_crossover(BitString<N> ** const parents, BitString<N>
    bzero(children[0]->values,children[0]->length*sizeof(long));
    bzero(children[1]->values,children[1]->length*sizeof(long));
    for (int i = 0; i < crosspoint; ++i) {
-      children[0]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
-      children[1]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
+      children[0]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
+      children[1]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
    }
    for (int i = crosspoint; i < N; ++i) {
-      children[0]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
-      children[1]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1L << (mapping[i] % 64)));
+      children[0]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
+      children[1]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
    }
 }
 
@@ -259,7 +264,7 @@ void BitStringMutation<N,Num,Den>::flip(BitString<N> * chromosome) {
 
    for (uint i = 0; i < toflip; ++i) {
       unsigned flip_pos = rnd.random() % N;
-      chromosome->values[flip_pos / 64] ^= (1L << flip_pos % 64);
+      chromosome->values[flip_pos / 64] ^= (1LL << flip_pos % 64);
    }
 
 }
@@ -272,15 +277,15 @@ void BitStringMutation<N,Num,Den>::interchange(BitString<N> * chromosome) {
    unsigned toswap = 0;
    while (rnd.random() < threshold && toswap < N) toswap += 1;
 
-   ulong bit0, bit1;
+   uint64_t bit0, bit1;
    for (uint i = 0; i < toswap; ++i) {
       unsigned swap_0 = rnd.random() % N;
       unsigned swap_1 = rnd.random() % N;
       if (swap_0 == swap_1) continue;
       bit0 = (chromosome->values[swap_0 / 64] >> (swap_0 % 64)) & 1;
       bit1 = (chromosome->values[swap_1 / 64] >> (swap_1 % 64)) & 1;
-      chromosome->values[swap_0 / 64] &= ~(1L << (swap_0 % 64));
-      chromosome->values[swap_1 / 64] &= ~(1L << (swap_1 % 64));
+      chromosome->values[swap_0 / 64] &= ~(1LL << (swap_0 % 64));
+      chromosome->values[swap_1 / 64] &= ~(1LL << (swap_1 % 64));
       chromosome->values[swap_0 / 64] |= (bit1 << (swap_0 % 64));
       chromosome->values[swap_1 / 64] |= (bit0 << (swap_1 % 64));
    }

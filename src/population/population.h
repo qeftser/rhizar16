@@ -135,7 +135,7 @@ inline void Population<T>::grow_population(vector * generation, int new_len) {
          exit(errno);
       }
 
-      bzero(new_chromosome,sizeof(struct Chromosome<T>));
+      memset(new_chromosome,0,sizeof(struct Chromosome<T>));
       ((Chromosome<T> **)generation->data)[i] = new_chromosome;
    }
 
@@ -226,10 +226,10 @@ Population<T>::Population(PopulationOptions * options) {
    time_elapsed = 0.0;
    generation = 0;
 
-   bzero(&generation_A,sizeof(vector));
-   bzero(&generation_B,sizeof(vector));
-   bzero(&before,sizeof(vector));
-   bzero(&after,sizeof(vector));
+   memset(&generation_A,0,sizeof(vector));
+   memset(&generation_B,0,sizeof(vector));
+   memset(&before,0,sizeof(vector));
+   memset(&after,0,sizeof(vector));
 
    grow_population(&generation_A, options->population_size + __RHIZAR16_POPULATION_GENERATION_GUTTER__);
    grow_population(&generation_B, options->population_size + __RHIZAR16_POPULATION_GENERATION_GUTTER__);
