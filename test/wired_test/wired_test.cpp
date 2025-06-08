@@ -774,7 +774,8 @@ int wired_server_get_ready_2() {
 
 void wired_test_delay_open(WiredLink * l, uint port) {
 
-   std::this_thread::sleep_for(std::chrono::milliseconds(10));
+   std::this_thread::yield();
+   std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
    l->open("localhost",port);
 

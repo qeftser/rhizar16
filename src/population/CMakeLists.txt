@@ -17,6 +17,8 @@ target_sources(population
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/population.h
+   ${CMAKE_CURRENT_LIST_DIR}/thread_pond.h
+   ${CMAKE_CURRENT_LIST_DIR}/concurrent_queue.h
 
 )
 

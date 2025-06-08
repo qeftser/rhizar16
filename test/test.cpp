@@ -2,6 +2,7 @@
 #include "bit_string_test.h"
 #include "uniform_rand_test.h"
 #include "population_test.h"
+#include "concurrent_queue_test.h"
 #include "selection_test.h"
 #include "file_opts_test.h"
 #include "wired_test.h"
@@ -350,6 +351,24 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_4());
    __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_5());
    __RHIZAR16_TEST(Rhizar16::TestWired::wired_server_send_link_recv_6());
+
+   /* ===========================================================
+    * ConcurrentQueue tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::initialization());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::empty_0());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::push_0());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::empty_1());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::pop_0());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::push_1());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::empty_2());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::push_2());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::pop_1());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::push_3());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::pop_2());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::push_4());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::pop_3());
+   __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::usage());
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 
