@@ -6,10 +6,12 @@ target_sources(population_test
    PRIVATE
    ${CMAKE_CURRENT_LIST_DIR}/population_test.cpp
    ${CMAKE_CURRENT_LIST_DIR}/concurrent_queue_test.cpp
+   ${CMAKE_CURRENT_LIST_DIR}/thread_pond_test.cpp
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/population_test.h
    ${CMAKE_CURRENT_LIST_DIR}/concurrent_queue_test.h
+   ${CMAKE_CURRENT_LIST_DIR}/thread_pond_test.h
 
 )
 

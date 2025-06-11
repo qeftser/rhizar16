@@ -3,6 +3,7 @@
 #include "uniform_rand_test.h"
 #include "population_test.h"
 #include "concurrent_queue_test.h"
+#include "thread_pond_test.h"
 #include "selection_test.h"
 #include "file_opts_test.h"
 #include "wired_test.h"
@@ -37,7 +38,6 @@ int main(void) {
    /* ===========================================================
     * UniformRand tests
     * =========================================================== */
-
    __RHIZAR16_TEST(Rhizar16::TestUniformRand::initialization());
    __RHIZAR16_TEST(Rhizar16::TestUniformRand::initialization_seed0());
    __RHIZAR16_TEST(Rhizar16::TestUniformRand::initialization_seed_0x43022432());
@@ -369,6 +369,22 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::push_4());
    __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::pop_3());
    __RHIZAR16_TEST(Rhizar16::TestConcurrentQueue::usage());
+
+   /* ===========================================================
+    * ThreadPond tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::initialization_0());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::initialization_1());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::initialization_2());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::wait_0());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::wait_1());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_0());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_1());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_2());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_3());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_4());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_5());
+   __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_6());
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 
