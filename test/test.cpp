@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <thread>
+#include <chrono>
 
 int total_tests = 0;
 int passed_tests = 0;

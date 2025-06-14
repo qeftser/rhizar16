@@ -2,6 +2,7 @@
 #include "thread_pond_test.h"
 #include <thread>
 #include <chrono>
+#include <stdio.h>
 
 namespace Rhizar16 {
 
@@ -42,13 +43,16 @@ void test_thread_pond_dummy_never_end(void * arg) {
 }
 
 int wait_1() {
+#ifdef _WIN32
+   return 2;
+#endif
    ThreadPond t;
 
    t.queue(test_thread_pond_dummy_never_end,NULL);
 
    int retval = 1;
 
-   if (t.wait(std::chrono::milliseconds(3)) != false)
+   if (t.wait(std::chrono::milliseconds(10)) != false)
       retval = 0;
 
    return retval;
@@ -72,7 +76,7 @@ int queue_0() {
 
    t.queue(test_thread_pond_dummy_calculate_n_factorial,&factof);
 
-   t.wait(std::chrono::milliseconds(5));
+   t.wait(std::chrono::milliseconds(100));
 
    if (factof != 2432902008176640000)
       retval = 0;

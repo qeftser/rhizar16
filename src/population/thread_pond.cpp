@@ -1,9 +1,145 @@
 
 #include "thread_pond.h"
+#include <handleapi.h>
+#include <processthreadsapi.h>
+#include <synchapi.h>
+#include <thread>
 
 namespace Rhizar16 {
 
 #ifdef _WIN32
+
+void ThreadPond::worker_callback(worker_init * runtime) {
+
+   //printf("entering barrier...\n");
+   EnterSynchronizationBarrier(runtime->barrier,0);
+
+   while ( *runtime->live ) {
+
+      InterlockedIncrement(runtime->ready_count);
+
+      std::unique_lock lock(*runtime->lock);
+      //printf("Waiting...\n");
+      runtime->notify->wait_for(lock,std::chrono::milliseconds(10));
+  //    printf("Started...\n");
+
+      //printf("%s\n",*runtime->live ? "LIVE" : "DEAD");
+
+      lock.unlock();
+
+      //printf("Lock released...\n");
+
+      InterlockedDecrement(runtime->ready_count);
+
+      while (!runtime->tasks->empty() && *runtime->live) {
+
+         task * worker_task = runtime->tasks->pop();
+         if (worker_task) {
+ //           printf("running task...\n");
+            worker_task->func(worker_task->arg);
+
+            /* note, this has a chance to leak memory when the
+             * thread is reclaimed by the system on exit. However
+             * I am going to ignore this for the windows implimentation
+             * because I am done caring at this point xD lol         */
+            delete worker_task;
+         }
+      }
+
+      //printf("loop exited\n");
+   }
+   //printf("thread exiting\n");
+   return;
+}
+
+ThreadPond::ThreadPond(uint32_t thread_count)
+   : thread_count(thread_count ? thread_count : 1) {
+
+   threads = new std::thread[this->thread_count];
+   runtime = new worker_init[this->thread_count];
+   ready_count = (LONG *)_aligned_malloc(sizeof(LONG),32);
+
+   *ready_count = 0;
+   live = TRUE;
+
+   LPSYNCHRONIZATION_BARRIER barrier = NULL;
+   InitializeSynchronizationBarrier(barrier, 1 + this->thread_count, -1);
+
+   for (u_int i = 0; i < this->thread_count; ++i) {
+      runtime[i].ready_count = ready_count;
+      runtime[i].tasks = &tasks;
+      runtime[i].notify = &notify;
+      runtime[i].lock = &lock;
+      runtime[i].live = &live;
+      runtime[i].barrier = barrier;
+      threads[i] = std::thread(worker_callback,&runtime[i]);
+   }
+
+   EnterSynchronizationBarrier(barrier,0);
+   DeleteSynchronizationBarrier(barrier);
+}
+
+ThreadPond::~ThreadPond() {
+
+   while (!tasks.empty())
+      delete tasks.pop();
+
+   live = FALSE;
+   lock.lock();
+   lock.unlock();
+   notify.notify_all();
+   for (u_int i = 0; i < thread_count; ++i) {
+//      printf("killing thread %d %s %s\n",i,live ? "TRUE" : "FALSE",*runtime[i].live ? "TRUE" : "FALSE");
+      if (threads[i].joinable())
+         threads[i].join();
+   }
+
+   delete[] threads;
+   delete[] runtime;
+   _aligned_free(ready_count);
+
+}
+
+void ThreadPond::queue(std::function<void(void *)> func, void * arg) {
+
+   task * new_task = new task;
+   new_task->func = func;
+   new_task->arg = arg;
+
+   tasks.push(new_task);
+
+   notify.notify_all();
+
+}
+
+bool ThreadPond::wait(std::chrono::nanoseconds timeout) {
+   if (timeout == std::chrono::nanoseconds(0)) {
+      do {
+
+         if (tasks.empty() && *ready_count == thread_count)
+            return true;
+         std::this_thread::sleep_for(std::chrono::nanoseconds(100));
+         std::this_thread::yield();
+      } while (1);
+
+   }
+   else {
+      auto start = std::chrono::steady_clock::now();
+
+      do {
+
+         if (tasks.empty() && *ready_count == thread_count)
+            return true;
+         std::this_thread::sleep_for(std::chrono::nanoseconds(100));
+         std::this_thread::yield();
+
+      } while (std::chrono::nanoseconds(std::chrono::steady_clock::now() - start) < timeout);
+
+      return false;
+   }
+}
+
+
 
 #elif defined(__unix__)
 
@@ -82,7 +218,7 @@ void * ThreadPond::scheduler_runtime(void * init) {
       }
 
       explicit_bzero(&wait_delay,sizeof(struct timeval));
-      wait_delay.tv_usec = 10000;
+      wait_delay.tv_usec = 1000;
 
       finished = select(maxfd + 1,&read_set,NULL,NULL,&wait_delay);
 

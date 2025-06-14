@@ -27,3 +27,11 @@ target_include_directories(population
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}
 )
+
+if (WIN32)
+
+   find_library(ws NAMES synchronization)
+   find_library(ws NAMES ws2_32)
+   target_link_libraries(population synchronization ws2_32)
+
+endif(WIN32)

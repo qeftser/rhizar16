@@ -4,12 +4,22 @@
 #define __RHIZAR16_THREAD_POND__
 #include <stdint.h>
 #include <thread>
+#include <functional>
+#include <condition_variable>
+#include "concurrent_queue.h"
 
 /* a thread pool. Will be windows/unix cross 
  * platform, which is the cause of the weird
  * name and the class-based implimentation */
 
 #ifdef _WIN32
+
+#include <windows.h>
+#include <processthreadsapi.h>
+#include <winnt.h>
+#include <malloc.h>
+#include <synchapi.h>
+#include <handleapi.h>
 
 #elif defined(__unix__)
 
@@ -26,11 +36,8 @@
 #include <signal.h>
 #include <string.h>
 #include <limits.h>
-#include <functional>
 #include <mutex>
 #include <queue>
-
-#include "concurrent_queue.h"
 
 #endif
 
@@ -42,6 +49,31 @@ private:
    const uint32_t thread_count;
 
 #ifdef _WIN32
+
+   struct task {
+      std::function<void(void *)> func;
+      void * arg;
+   };
+
+   struct worker_init {
+      std::condition_variable   * notify;
+      std::mutex                * lock;
+      LONG                      * ready_count;
+      ConcurrentQueue<task *>   * tasks;
+      volatile bool             * live;
+      LPSYNCHRONIZATION_BARRIER   barrier;
+   };
+
+   std::condition_variable notify;
+   std::mutex lock;
+   std::thread * threads;
+   worker_init * runtime;
+   LONG * ready_count;
+   ConcurrentQueue<task *> tasks;
+   volatile bool live;
+
+   static void worker_callback(worker_init * arg);
+
 
 #elif defined(__unix__)
 
