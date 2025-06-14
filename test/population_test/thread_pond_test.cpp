@@ -52,7 +52,7 @@ int wait_1() {
 
    int retval = 1;
 
-   if (t.wait(std::chrono::milliseconds(10)) != false)
+   if (t.wait(std::chrono::milliseconds(3)) != false)
       retval = 0;
 
    return retval;

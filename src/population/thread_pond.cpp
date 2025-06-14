@@ -1,9 +1,5 @@
 
 #include "thread_pond.h"
-#include <handleapi.h>
-#include <processthreadsapi.h>
-#include <synchapi.h>
-#include <thread>
 
 namespace Rhizar16 {
 
@@ -11,7 +7,6 @@ namespace Rhizar16 {
 
 void ThreadPond::worker_callback(worker_init * runtime) {
 
-   //printf("entering barrier...\n");
    EnterSynchronizationBarrier(runtime->barrier,0);
 
    while ( *runtime->live ) {
@@ -19,15 +14,9 @@ void ThreadPond::worker_callback(worker_init * runtime) {
       InterlockedIncrement(runtime->ready_count);
 
       std::unique_lock lock(*runtime->lock);
-      //printf("Waiting...\n");
       runtime->notify->wait_for(lock,std::chrono::milliseconds(10));
-  //    printf("Started...\n");
-
-      //printf("%s\n",*runtime->live ? "LIVE" : "DEAD");
 
       lock.unlock();
-
-      //printf("Lock released...\n");
 
       InterlockedDecrement(runtime->ready_count);
 
@@ -35,20 +24,13 @@ void ThreadPond::worker_callback(worker_init * runtime) {
 
          task * worker_task = runtime->tasks->pop();
          if (worker_task) {
- //           printf("running task...\n");
             worker_task->func(worker_task->arg);
 
-            /* note, this has a chance to leak memory when the
-             * thread is reclaimed by the system on exit. However
-             * I am going to ignore this for the windows implimentation
-             * because I am done caring at this point xD lol         */
             delete worker_task;
          }
       }
 
-      //printf("loop exited\n");
    }
-   //printf("thread exiting\n");
    return;
 }
 
@@ -89,7 +71,6 @@ ThreadPond::~ThreadPond() {
    lock.unlock();
    notify.notify_all();
    for (u_int i = 0; i < thread_count; ++i) {
-//      printf("killing thread %d %s %s\n",i,live ? "TRUE" : "FALSE",*runtime[i].live ? "TRUE" : "FALSE");
       if (threads[i].joinable())
          threads[i].join();
    }
@@ -156,7 +137,6 @@ void ThreadPond::termination_callback(int sig) {
 
 void sigsegv_mask(int sig) {
    (void)sig;
-   printf("dying!\n");
    return;
 }
 
@@ -195,7 +175,7 @@ void * ThreadPond::scheduler_runtime(void * init) {
    runtime->barrier = NULL;
 
    int maxfd = INT_MIN;
-   for (int i = 0; i < runtime->thread_count; ++i) {
+   for (uint i = 0; i < runtime->thread_count; ++i) {
       if (runtime->read_end[i] > maxfd)
          maxfd = runtime->read_end[i];
    }
@@ -213,17 +193,17 @@ void * ThreadPond::scheduler_runtime(void * init) {
    do {
 
       FD_ZERO(&read_set);
-      for (int i = 0; i < runtime->thread_count; ++i) {
+      for (uint i = 0; i < runtime->thread_count; ++i) {
          FD_SET(runtime->read_end[i],&read_set);
       }
 
       explicit_bzero(&wait_delay,sizeof(struct timeval));
-      wait_delay.tv_usec = 1000;
+      wait_delay.tv_usec = 10000;
 
       finished = select(maxfd + 1,&read_set,NULL,NULL,&wait_delay);
 
       if (finished > 0) {
-         for (int i = 0; i < runtime->thread_count; ++i) {
+         for (uint i = 0; i < runtime->thread_count; ++i) {
             if (FD_ISSET(runtime->read_end[i],&read_set)) {
                while (read(runtime->read_end[i],&ready[i],1) < 1);
 
@@ -245,7 +225,7 @@ void * ThreadPond::scheduler_runtime(void * init) {
 
       /* avoid killing the thread while it has obtained the queue lock */
       pthread_sigmask(SIG_BLOCK,&free_mask,NULL);
-      for (int i = 0; i < runtime->thread_count && (!runtime->task_queue->empty()); ++i) {
+      for (uint i = 0; i < runtime->thread_count && (!runtime->task_queue->empty()); ++i) {
 
          if (ready[i]) {
 
@@ -287,7 +267,7 @@ ThreadPond::ThreadPond(uint32_t thread_count)
    bzero(triggers,sizeof(int)*this->thread_count);
    bzero(mutexes,sizeof(int)*this->thread_count);
 
-   for (int i = 0; i < this->thread_count; ++i) {
+   for (uint i = 0; i < this->thread_count; ++i) {
       pthread_mutex_init(&mutexes[i],NULL);
       pthread_cond_init(&triggers[i],NULL);
    }
@@ -304,14 +284,10 @@ ThreadPond::ThreadPond(uint32_t thread_count)
    struct sigaction thread_action;
    bzero(&thread_action,sizeof(struct sigaction));
    thread_action.sa_handler = thread_callback;
-
    sigaction(__RHIZAR16_THREAD_SIGNAL__,&thread_action,NULL);
 
    thread_action.sa_handler = termination_callback;
    sigaction(__RHIZAR16_THREAD_TERMINATE__,&thread_action,NULL);
-
-   thread_action.sa_handler = sigsegv_mask;
-   sigaction(SIGSEGV,&thread_action,NULL);
 
    bzero(&scheduler_data,sizeof(scheduler_init));
    scheduler_data.active       = &scheduler_active;
@@ -328,7 +304,7 @@ ThreadPond::ThreadPond(uint32_t thread_count)
    pthread_setname_np(scheduler,"scheduler");
 
    int collecter[2];
-   for (int i = 0; i < this->thread_count; ++i) {
+   for (uint i = 0; i < this->thread_count; ++i) {
 
       pipe(collecter);
       read_end [i] = collecter[0];
@@ -370,14 +346,14 @@ ThreadPond::~ThreadPond() {
    free(workers);
    free(worker_data);
 
-   for (int i = 0; i < thread_count; ++i) {
+   for (uint i = 0; i < thread_count; ++i) {
       close(read_end[i]);
       close(write_end[i]);
    }
    free(read_end);
    free(write_end);
 
-   for (int i = 0; i < this->thread_count; ++i) {
+   for (uint i = 0; i < this->thread_count; ++i) {
       pthread_mutex_destroy(&mutexes[i]);
       pthread_cond_destroy(&triggers[i]);
    }

@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <thread>
 #include <functional>
-#include <condition_variable>
 #include "concurrent_queue.h"
 
 /* a thread pool. Will be windows/unix cross 
@@ -14,6 +13,7 @@
 
 #ifdef _WIN32
 
+#include <condition_variable>
 #include <windows.h>
 #include <processthreadsapi.h>
 #include <winnt.h>
