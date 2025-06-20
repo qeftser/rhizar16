@@ -7,6 +7,7 @@
 #include "selection_test.h"
 #include "file_opts_test.h"
 #include "wired_test.h"
+#include "num_string_test.h"
 
 #include <stdio.h>
 #include <time.h>
@@ -195,6 +196,14 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_2());
    __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_3());
    __RHIZAR16_TEST(Rhizar16::TestBitString::interchange_4());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::encode_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::encode_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::encode_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::encode_3());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::decode_0());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::decode_1());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::decode_2());
+   __RHIZAR16_TEST(Rhizar16::TestBitString::decode_3());
 
    /* ===========================================================
     * FileOpts tests
@@ -387,6 +396,60 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_4());
    __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_5());
    __RHIZAR16_TEST(Rhizar16::TestThreadPond::queue_6());
+
+   /* ===========================================================
+    * NumString tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestNumString::intialization_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::intialization_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::intialization_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::intialization_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::intialization_4());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::intialization_5());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::encode_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::encode_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::encode_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::encode_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::decode_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::decode_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::decode_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::decode_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::single_point_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::single_point_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::single_point_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::single_point_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::two_point_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::two_point_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::two_point_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::two_point_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::uniform_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::uniform_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::uniform_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::uniform_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::shuffle_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::shuffle_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::shuffle_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::shuffle_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::precedence_preservative_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::precedence_preservative_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::precedence_preservative_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::precedence_preservative_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::ordered_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::ordered_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::ordered_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::ordered_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::noise_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::noise_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::noise_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::noise_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_0());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_1());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_2());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_3());
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 

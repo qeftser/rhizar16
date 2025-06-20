@@ -7,13 +7,15 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <functional>
 #include "uniform_rand.h"
 
 #ifdef _WIN32
 typedef unsigned  int  uint;
-typedef unsigned long ulong;
+typedef unsigned long long ulong;
 #endif
 
 namespace Rhizar16 {
@@ -49,14 +51,11 @@ struct BitString {
    static void three_parent_crossover(BitString<N> ** const parents, BitString<N> ** children);
    static void shuffle_crossover(BitString<N> ** const parents, BitString<N> ** children);
 
-};
+   static std::function<void(BitString<N> *)> flip(double probability);
+   static std::function<void(BitString<N> *)> interchange(double probability);
 
-template<unsigned N, unsigned Num, unsigned Dem>
-class BitStringMutation {
-
-   static void flip(BitString<N> * chromosome);
-   static void interchange(BitString<N> * chromosome);
-
+   static size_t encode(BitString<N> * obj, uint8_t * buf);
+   static size_t decode(BitString<N> * obj, uint8_t * buf);
 };
 
 template<unsigned N>
@@ -242,8 +241,8 @@ void BitString<N>::shuffle_crossover(BitString<N> ** const parents, BitString<N>
 
    uint crosspoint = rnd.random() % (N + 1);
 
-   bzero(children[0]->values,children[0]->length*sizeof(long));
-   bzero(children[1]->values,children[1]->length*sizeof(long));
+   memest(children[0]->values,0x00,children[0]->length*sizeof(long));
+   memest(children[1]->values,0x00,children[1]->length*sizeof(long));
    for (int i = 0; i < crosspoint; ++i) {
       children[0]->values[mapping[i] / 64] |= (parents[0]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
       children[1]->values[mapping[i] / 64] |= (parents[1]->values[mapping[i] / 64] & (1LL << (mapping[i] % 64)));
@@ -254,42 +253,77 @@ void BitString<N>::shuffle_crossover(BitString<N> ** const parents, BitString<N>
    }
 }
 
-template<unsigned N, unsigned Num, unsigned Den>
-void BitStringMutation<N,Num,Den>::flip(BitString<N> * chromosome) {
-   static UniformRand rnd = UniformRand();
-   ulong threshold = (ULONG_MAX * ((double)Num / Den));
+template<unsigned N>
+std::function<void(BitString<N> *)> BitString<N>::flip(double probability) {
 
-   unsigned toflip = 0;
-   while (rnd.random() < threshold && toflip < N) toflip += 1;
+   uint64_t compr = (double)ULLONG_MAX * probability;
 
-   for (uint i = 0; i < toflip; ++i) {
-      unsigned flip_pos = rnd.random() % N;
-      chromosome->values[flip_pos / 64] ^= (1LL << flip_pos % 64);
-   }
+   assert(probability <= 1.0 && probability >= 0.0 
+         && "BitString: probability for function 'interchange' must be in the range [0.0, 1.0]");
+
+   return [compr](BitString<N> * chromosome) {
+      static UniformRand rnd = UniformRand();
+
+      unsigned toflip = 0;
+      while (rnd.random() < compr && toflip < N) toflip += 1;
+
+      for (uint i = 0; i < toflip; ++i) {
+         unsigned flip_pos = rnd.random() % N;
+         chromosome->values[flip_pos / 64] ^= (1LL << flip_pos % 64);
+      }
+   };
 
 }
 
-template<unsigned N, unsigned Num, unsigned Den>
-void BitStringMutation<N,Num,Den>::interchange(BitString<N> * chromosome) {
-   static UniformRand rnd = UniformRand();
-   ulong threshold = (ULONG_MAX * ((double)Num / Den));
+template<unsigned N>
+std::function<void(BitString<N> *)> BitString<N>::interchange(double probability) {
 
-   unsigned toswap = 0;
-   while (rnd.random() < threshold && toswap < N) toswap += 1;
+   uint64_t compr = (double)ULLONG_MAX * probability;
 
-   uint64_t bit0, bit1;
-   for (uint i = 0; i < toswap; ++i) {
-      unsigned swap_0 = rnd.random() % N;
-      unsigned swap_1 = rnd.random() % N;
-      if (swap_0 == swap_1) continue;
-      bit0 = (chromosome->values[swap_0 / 64] >> (swap_0 % 64)) & 1;
-      bit1 = (chromosome->values[swap_1 / 64] >> (swap_1 % 64)) & 1;
-      chromosome->values[swap_0 / 64] &= ~(1LL << (swap_0 % 64));
-      chromosome->values[swap_1 / 64] &= ~(1LL << (swap_1 % 64));
-      chromosome->values[swap_0 / 64] |= (bit1 << (swap_0 % 64));
-      chromosome->values[swap_1 / 64] |= (bit0 << (swap_1 % 64));
-   }
+   assert(probability <= 1.0 && probability >= 0.0 
+         && "BitString: probability for function 'interchange' must be in the range [0.0, 1.0]");
 
+   return [compr](BitString<N> * chromosome) {
+      static UniformRand rnd = UniformRand();
+
+      unsigned toswap = 0;
+      while (rnd.random() < compr && toswap < N) toswap += 1;
+
+      uint64_t bit0, bit1;
+      for (uint i = 0; i < toswap; ++i) {
+         unsigned swap_0 = rnd.random() % N;
+         unsigned swap_1 = rnd.random() % N;
+         if (swap_0 == swap_1) continue;
+         bit0 = (chromosome->values[swap_0 / 64] >> (swap_0 % 64)) & 1;
+         bit1 = (chromosome->values[swap_1 / 64] >> (swap_1 % 64)) & 1;
+         chromosome->values[swap_0 / 64] &= ~(1LL << (swap_0 % 64));
+         chromosome->values[swap_1 / 64] &= ~(1LL << (swap_1 % 64));
+         chromosome->values[swap_0 / 64] |= (bit1 << (swap_0 % 64));
+         chromosome->values[swap_1 / 64] |= (bit0 << (swap_1 % 64));
+      }
+   };
+}
+
+template<unsigned N>
+size_t BitString<N>::encode(BitString<N> * obj, uint8_t * buf) {
+
+   size_t len = obj->length * sizeof(uint64_t);
+
+   if (buf)
+      memcpy(buf,obj->values,len);
+
+   return len;
+}
+
+template<unsigned N>
+size_t BitString<N>::decode(BitString<N> * obj, uint8_t * buf) {
+
+   size_t len = obj->length * sizeof(uint64_t);
+
+   if (buf)
+      memcpy(obj->values,buf,len);
+
+   return len;
 }
 
 }

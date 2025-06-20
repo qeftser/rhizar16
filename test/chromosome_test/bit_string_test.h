@@ -43,8 +43,8 @@ public:
    static void uniform_crossover(BitString<N> ** const parents, BitString<N> ** children, uint64_t * rnd);
    static void three_parent_crossover(BitString<N> ** const parents, BitString<N> ** children, uint64_t * rnd);
    static void shuffle_crossover(BitString<N> ** const parents, BitString<N> ** children, uint64_t * rnd);
-   static void flip(BitString<N> * chromosome, uint64_t * rnd, uint num, uint den);
-   static void interchange(BitString<N> * chromosome, uint64_t * rnd, uint num, uint den);
+   static std::function<void(BitString<N> *, uint64_t *)> flip(double probability);
+   static std::function<void(BitString<N> *, uint64_t *)> interchange(double probability);
 };
 
 int single_point_crossover_0();
@@ -92,6 +92,16 @@ int interchange_1();
 int interchange_2();
 int interchange_3();
 int interchange_4();
+
+int encode_0();
+int encode_1();
+int encode_2();
+int encode_3();
+
+int decode_0();
+int decode_1();
+int decode_2();
+int decode_3();
 
 }
 

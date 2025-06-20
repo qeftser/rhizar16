@@ -5,9 +5,11 @@ target_sources(chromosome_test
    
    PRIVATE
    ${CMAKE_CURRENT_LIST_DIR}/bit_string_test.cpp
+   ${CMAKE_CURRENT_LIST_DIR}/num_string_test.cpp
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/bit_string_test.h
+   ${CMAKE_CURRENT_LIST_DIR}/num_string_test.h
 
 )
 

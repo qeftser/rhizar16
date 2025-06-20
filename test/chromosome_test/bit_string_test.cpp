@@ -409,42 +409,46 @@ void TestBitString::BitStringSimulation<N>::shuffle_crossover(BitString<N> ** co
 }
 
 template<unsigned N>
-void TestBitString::BitStringSimulation<N>::flip(BitString<N> * chromosome, uint64_t * rnd, uint num, uint den) {
+std::function<void(BitString<N> *, uint64_t *)> TestBitString::BitStringSimulation<N>::flip(double probability) {
 
-   ulong threshold = (ULONG_MAX * ((double)num / den));
-   int randpos = 0;
+   uint64_t compr = (double)ULLONG_MAX * probability;
 
-   unsigned toflip = 0;
-   while (rnd[randpos++] < threshold && toflip < N) toflip += 1;
+   return [compr](BitString<N> * chromosome, uint64_t * rnd) {
 
-   for (uint i = 0; i < toflip; ++i) {
-      unsigned flip_pos = rnd[randpos++] % N;
-      chromosome->values[flip_pos / 64] ^= (1LL << flip_pos % 64);
-   }
+      unsigned toflip = 0;
+      while (*(rnd++) < compr && toflip < N) toflip += 1;
+
+      for (uint i = 0; i < toflip; ++i) {
+         unsigned flip_pos = *(rnd++) % N;
+         chromosome->values[flip_pos / 64] ^= (1LL << flip_pos % 64);
+      }
+   };
 
 }
 
 template<unsigned N>
-void TestBitString::BitStringSimulation<N>::interchange(BitString<N> * chromosome, uint64_t * rnd, uint num, uint den) {
+std::function<void(BitString<N> *, uint64_t *)> TestBitString::BitStringSimulation<N>::interchange(double probability) {
 
-   ulong threshold = (ULONG_MAX * ((double)num / den));
-   int randpos = 0;
+   uint64_t compr = (double)ULLONG_MAX * probability;
 
-   unsigned toswap = 0;
-   while (rnd[randpos++] < threshold && toswap < N) toswap += 1;
+   return [compr](BitString<N> * chromosome, uint64_t * rnd) {
 
-   unsigned long long bit0, bit1;
-   for (uint i = 0; i < toswap; ++i) {
-      unsigned swap_0 = rnd[randpos++] % N;
-      unsigned swap_1 = rnd[randpos++] % N;
-      if (swap_0 == swap_1) continue;
-      bit0 = (chromosome->values[swap_0 / 64] >> (swap_0 % 64)) & 1;
-      bit1 = (chromosome->values[swap_1 / 64] >> (swap_1 % 64)) & 1;
-      chromosome->values[swap_0 / 64] &= ~(1LL << (swap_0 % 64));
-      chromosome->values[swap_1 / 64] &= ~(1LL << (swap_1 % 64));
-      chromosome->values[swap_0 / 64] |= (bit1 << (swap_0 % 64));
-      chromosome->values[swap_1 / 64] |= (bit0 << (swap_1 % 64));
-   }
+      unsigned toswap = 0;
+      while (*(rnd++) < compr && toswap < N) toswap += 1;
+
+      uint64_t bit0, bit1;
+      for (uint i = 0; i < toswap; ++i) {
+         unsigned swap_0 = *(rnd++) % N;
+         unsigned swap_1 = *(rnd++) % N;
+         if (swap_0 == swap_1) continue;
+         bit0 = (chromosome->values[swap_0 / 64] >> (swap_0 % 64)) & 1;
+         bit1 = (chromosome->values[swap_1 / 64] >> (swap_1 % 64)) & 1;
+         chromosome->values[swap_0 / 64] &= ~(1LL << (swap_0 % 64));
+         chromosome->values[swap_1 / 64] &= ~(1LL << (swap_1 % 64));
+         chromosome->values[swap_0 / 64] |= (bit1 << (swap_0 % 64));
+         chromosome->values[swap_1 / 64] |= (bit0 << (swap_1 % 64));
+      }
+   };
 }
 
 int TestBitString::single_point_crossover_0() {
@@ -1326,9 +1330,10 @@ int TestBitString::flip_0() {
 
    a.values[0] = 0;
 
-   uint64_t rnd[1] = { ULONG_MAX };
+   uint64_t rnd[1] = { ULLONG_MAX };
 
-   BitStringSimulation<10>::flip(&a,rnd,99,100);
+   auto flip = BitStringSimulation<10>::flip(99.0/100.0);
+   flip(&a,rnd);
 
    int retval = 1;
 
@@ -1344,9 +1349,10 @@ int TestBitString::flip_1() {
 
    a.values[0] = 0;
 
-   uint64_t rnd[1] = { (uint64_t)(ULONG_MAX * ((double)50 / 100)) };
+   uint64_t rnd[1] = { (uint64_t)(ULLONG_MAX * ((double)50 / 100)) };
 
-   BitStringSimulation<10>::flip(&a,rnd,50,100);
+   auto flip = BitStringSimulation<10>::flip(50.0/100.0);
+   flip(&a,rnd);
 
    int retval = 1;
 
@@ -1362,10 +1368,11 @@ int TestBitString::flip_2() {
 
    a.values[0] = 0;
 
-   uint64_t rnd[3] = { (uint64_t)(ULONG_MAX * ((double)50 / 100)) - 1,
-                       ULONG_MAX, 0 };
+   uint64_t rnd[3] = { (uint64_t)(ULLONG_MAX * ((double)50 / 100)) - 1,
+                       ULLONG_MAX, 0 };
 
-   BitStringSimulation<10>::flip(&a,rnd,50,100);
+   auto flip = BitStringSimulation<10>::flip(50.0/100.0);
+   flip(&a,rnd);
 
    int retval = 1;
 
@@ -1380,10 +1387,11 @@ int TestBitString::flip_3() {
    BitString<320> a;
    memset(a.values,0,sizeof(uint64_t)*5);
 
-   uint64_t rnd[11] = { 0, 0, 0, 0, 0, ULONG_MAX,
+   uint64_t rnd[11] = { 0, 0, 0, 0, 0, ULLONG_MAX,
                         5, 70, 140, 200, 300 };
 
-   BitStringSimulation<320>::flip(&a,rnd,50,100);
+   auto flip = BitStringSimulation<320>::flip(50.0/100.0);
+   flip(&a,rnd);
 
    int retval = 1;
 
@@ -1408,7 +1416,8 @@ int TestBitString::flip_4() {
 
    uint64_t rnd[10] = { 0, 0, 0, 0, 0, 1, 2 };
 
-   BitStringSimulation<3>::flip(&a,rnd,50,100);
+   auto flip = BitStringSimulation<3>::flip(50.0/100.0);
+   flip(&a,rnd);
 
    int retval = 1;
 
@@ -1424,9 +1433,10 @@ int TestBitString::interchange_0() {
 
    a.values[0] = 1;
 
-   uint64_t rnd[1] = { ULONG_MAX };
+   uint64_t rnd[1] = { ULLONG_MAX };
 
-   BitStringSimulation<10>::interchange(&a,rnd,99,100);
+   auto change = BitStringSimulation<10>::interchange(99.0/100.0);
+   change(&a,rnd);
 
    int retval = 1;
 
@@ -1442,9 +1452,10 @@ int TestBitString::interchange_1() {
 
    a.values[0] = 1;
 
-   uint64_t rnd[1] = { (uint64_t)(ULONG_MAX * ((double)50 / 100)) };
+   uint64_t rnd[1] = { (uint64_t)(ULLONG_MAX * ((double)50 / 100)) };
 
-   BitStringSimulation<10>::interchange(&a,rnd,50,100);
+   auto change = BitStringSimulation<10>::interchange(50.0/100.0);
+   change(&a,rnd);
 
    int retval = 1;
 
@@ -1460,10 +1471,11 @@ int TestBitString::interchange_2() {
 
    a.values[0] = 1;
 
-   uint64_t rnd[4] = { (uint64_t)(ULONG_MAX * ((double)50 / 100)) - 1,
-                       ULONG_MAX, 0, 1 };
+   uint64_t rnd[4] = { (uint64_t)(ULLONG_MAX * ((double)50 / 100)) - 1,
+                       ULLONG_MAX, 0, 1 };
 
-   BitStringSimulation<10>::interchange(&a,rnd,50,100);
+   auto change = BitStringSimulation<10>::interchange(50.0/100.0);
+   change(&a,rnd);
 
    int retval = 1;
 
@@ -1482,14 +1494,15 @@ int TestBitString::interchange_3() {
    a.values[3] = 0x0000080000000000;
    a.values[4] = 0x0000000000000010;
 
-   uint64_t rnd[16] = { 0, 0, 0, 0, 0, ULONG_MAX,
+   uint64_t rnd[16] = { 0, 0, 0, 0, 0, ULLONG_MAX,
                         32,  300,
                         117, 200,
                         150, 140,
                         235,  70,
                         260,   5 };
 
-   BitStringSimulation<320>::interchange(&a,rnd,50,100);
+   auto change = BitStringSimulation<320>::interchange(50.0/100.0);
+   change(&a,rnd);
 
    int retval = 1;
 
@@ -1514,7 +1527,8 @@ int TestBitString::interchange_4() {
 
    uint64_t rnd[11] = { 0, 0, 0, 0, 0, 2, 2, 1, 1, 2 };
 
-   BitStringSimulation<3>::interchange(&a,rnd,50,100);
+   auto change = BitStringSimulation<3>::interchange(50.0/100.0);
+   change(&a,rnd);
 
    int retval = 1;
 
@@ -1524,5 +1538,173 @@ int TestBitString::interchange_4() {
    return retval;
 }
 
+int TestBitString::encode_0() {
+   BitString<10> b;
+   b.values[0] = 0x7ff;
+
+   int retval = 1;
+
+   size_t out = BitString<10>::encode(&b,NULL);
+
+   if (out != sizeof(uint64_t))
+      retval = 0;
+
+   return retval;
+}
+
+int TestBitString::encode_1() {
+   BitString<10> b;
+   b.values[0] = 0x7ff;
+
+   int retval = 1;
+
+   uint8_t buf[sizeof(uint64_t)];
+   size_t out = BitString<10>::encode(&b,buf);
+
+   if (out != sizeof(uint64_t))
+      retval = 0;
+
+   if (*((uint64_t *)buf) != 0x7ff)
+      retval = 0;
+
+   return retval;
+}
+
+int TestBitString::encode_2() {
+   BitString<256> b;
+   b.values[0] = 0x0123456789abcdeffedcba9876543210;
+   b.values[1] = 0xa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5;
+   b.values[2] = 0x0123456789abcdeffedcba9876543210;
+   b.values[3] = 0xa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5;
+
+   int retval = 1;
+
+   uint8_t buf[sizeof(uint64_t) * 4];
+   size_t out = BitString<256>::encode(&b,buf);
+
+   if (out != sizeof(uint64_t) * 4)
+      retval = 0;
+
+   if (((uint64_t *)buf)[0] != b.values[0])
+      retval = 0;
+   if (((uint64_t *)buf)[1] != b.values[1])
+      retval = 0;
+   if (((uint64_t *)buf)[2] != b.values[2])
+      retval = 0;
+   if (((uint64_t *)buf)[3] != b.values[3])
+      retval = 0;
+
+   return retval;
+}
+
+int TestBitString::encode_3() {
+   BitString<64 * 100> b;
+   for (int i = 0; i < 100; ++i)
+      b.values[i] = i;
+
+   int retval = 1;
+
+   uint8_t buf[sizeof(uint64_t) * 100];
+   size_t out = BitString<64 * 100>::encode(&b,buf);
+
+   if (out != sizeof(uint64_t) * 100)
+      retval = 0;
+
+   for (int i = 0; i < 100; ++i)
+      if (((uint64_t *)buf)[i] != i)
+         retval = 0;
+
+   return retval;
+}
+
+int TestBitString::decode_0() {
+   BitString<5> b;
+   BitString<5> b_out;
+
+   uint8_t buf[sizeof(uint64_t)];
+   BitString<5>::encode(&b,buf);
+
+   size_t out = BitString<5>::decode(&b_out,buf);
+
+   int retval = 1;
+
+   if (out != sizeof(uint64_t))
+      retval = 0;
+
+   return retval;
+}
+
+int TestBitString::decode_1() {
+   BitString<5> b;
+   BitString<5> b_out;
+   b.values[0] = 0x1f;
+
+   uint8_t buf[sizeof(uint64_t)];
+   BitString<5>::encode(&b,buf);
+
+   size_t out = BitString<5>::decode(&b_out,buf);
+
+   int retval = 1;
+
+   if (out != sizeof(uint64_t))
+      retval = 0;
+
+   if (b.values[0] != b_out.values[0])
+      retval = 0;
+
+   return retval;
+}
+
+int TestBitString::decode_2() {
+   BitString<256> b;
+   BitString<256> b_out;
+   b.values[0] = 0x0123456789abcdeffedcba9876543210;
+   b.values[1] = 0xa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5;
+   b.values[2] = 0x0123456789abcdeffedcba9876543210;
+   b.values[3] = 0xa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5;
+
+   uint8_t buf[256];
+   BitString<256>::encode(&b,buf);
+
+   size_t out = BitString<256>::decode(&b_out,buf);
+
+   int retval = 1;
+
+   if (out != sizeof(uint64_t) * 4)
+      retval = 0;
+
+   if (b.values[0] != b_out.values[0])
+      retval = 0;
+   if (b.values[1] != b_out.values[1])
+      retval = 0;
+   if (b.values[2] != b_out.values[2])
+      retval = 0;
+   if (b.values[3] != b_out.values[3])
+      retval = 0;
+
+   return retval;
+}
+
+int TestBitString::decode_3() {
+   BitString<64 * 100> b;
+   BitString<64 * 100> b_out;
+   for (int i = 0; i < 100; ++i)
+      b.values[i] = i;
+
+   int retval = 1;
+
+   uint8_t buf[sizeof(uint64_t) * 100];
+   BitString<64 * 100>::encode(&b,buf);
+   size_t out = BitString<64 * 100>::decode(&b_out,buf);
+
+   if (out != sizeof(uint64_t) * 100)
+      retval = 0;
+
+   for (int i = 0; i < 100; ++i)
+      if (b_out.values[i] != b.values[i])
+         retval = 0;
+
+   return retval;
+}
 
 }

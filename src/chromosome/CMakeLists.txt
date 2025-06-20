@@ -9,6 +9,7 @@ target_sources(chromosome
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/bit_string.h
+   ${CMAKE_CURRENT_LIST_DIR}/num_string.h
    ${CMAKE_CURRENT_LIST_DIR}/chromosome.h
 
 )
