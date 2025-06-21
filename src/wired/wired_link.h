@@ -14,6 +14,8 @@
 #ifdef _WIN32
 typedef unsigned int uint;
 
+#define WIN32_LEAN_AND_MEAN
+
 #include <winsock2.h>
 #include <winsock.h>
 #include <windows.h>

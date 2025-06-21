@@ -2,6 +2,7 @@
 #include "wired_test.h"
 #include "wired_link.h"
 #include "wired_server.h"
+#include "wired_misc.h"
 #include <stdlib.h>
 #include <algorithm>
 #include <condition_variable>
@@ -1624,6 +1625,53 @@ int wired_server_send_link_recv_6() {
    int retval = 1;
 
    if (s.send(20,(uint8_t *)&retval,sizeof(int)) != -1)
+      retval = 0;
+
+   return retval;
+}
+
+int wired_self_0() {
+   int retval = 1;
+
+   if (Wired::is_self("127.0.0.1") != true)
+      retval = 0;
+
+   return retval;
+}
+
+int wired_self_1() {
+   int retval = 1;
+
+   char buf[257];
+   gethostname(buf,257);
+
+   std::string str = std::string(buf);
+
+   if (Wired::is_self(str) != true)
+      retval = 0;
+
+   return retval;
+}
+
+int wired_self_2() {
+   int retval = 1;
+
+   if (Wired::is_self("::1") != true)
+      retval = 0;
+
+   return retval;
+}
+
+int wired_self_3() {
+   int retval = 1;
+
+   if (Wired::is_self("::204209432423") != false)
+      retval = 0;
+
+   if (Wired::is_self("////////") != false)
+      retval = 0;
+
+   if (Wired::is_self("\\\\\\\\\\\\\\") != false)
       retval = 0;
 
    return retval;

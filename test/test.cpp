@@ -484,6 +484,15 @@ int main(void) {
 
 #endif
 
+   /* ===========================================================
+    * Wired::is_self tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_self_0());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_self_1());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_self_2());
+   __RHIZAR16_TEST(Rhizar16::TestWired::wired_self_3());
+
+
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 
    printf("============================================================================\n");

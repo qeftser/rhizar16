@@ -1,7 +1,7 @@
 
-#ifndef __RHIZAR16_PRINT_SOCKERR__
+#ifndef __RHIZAR16_WIRED_WINDOWS_SUPPORT__
 
-#define __RHIZAR16_PRINT_SOCKERR__
+#define __RHIZAR16_WIRED_WINDOWS_SUPPORT__
 
 #ifdef _WIN32
 #include <string>

@@ -16,11 +16,13 @@ target_sources(wired
    PRIVATE
    ${CMAKE_CURRENT_LIST_DIR}/wired_link.cpp
    ${CMAKE_CURRENT_LIST_DIR}/wired_server.cpp
+   ${CMAKE_CURRENT_LIST_DIR}/wired_misc.cpp
    ${CMAKE_CURRENT_LIST_DIR}/wired_windows_support.h
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/wired_link.h
    ${CMAKE_CURRENT_LIST_DIR}/wired_server.h
+   ${CMAKE_CURRENT_LIST_DIR}/wired_misc.h
 
 )
 

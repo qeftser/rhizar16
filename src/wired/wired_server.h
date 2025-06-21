@@ -24,6 +24,8 @@
 #ifdef _WIN32
 typedef unsigned int uint;
 
+#define WIN32_LEAN_AND_MEAN
+
 #include <winsock2.h>
 #include <winsock.h>
 #include <windows.h>
@@ -124,8 +126,8 @@ public:
     * On success, begin accepting incoming connections, processing 
     * queued tasks, and managing exising connections.              
     *
-    * Note that an IPv4 connection will be started on the given port, and
-    * a */
+    * Note that an IPv4 and IPv6 listen socket will be started on the 
+    * given port */
    int start(uint port);
 
    /* close down all connections and clean up the server */

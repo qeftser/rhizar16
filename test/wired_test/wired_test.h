@@ -98,6 +98,11 @@ int wired_server_send_link_recv_6();
 
 int wired_link_send_3();
 
+int wired_self_0();
+int wired_self_1();
+int wired_self_2();
+int wired_self_3();
+
 }
 
 }
