@@ -6,6 +6,7 @@
 #include "population.h"
 #include "util.h"
 #include <limits.h>
+#include <stdint.h>
 
 namespace Rhizar16 {
 
@@ -22,14 +23,14 @@ public:
 
       unsigned int collected = 0;
 
-      unsigned long pstep 
-         = (ULONG_MAX / (Parents * ((new_poplen / Children) + (new_poplen % Children ? 1 : 0))));
+      uint64_t pstep 
+         = (ULLONG_MAX / (Parents * ((new_poplen / Children) + (new_poplen % Children ? 1 : 0))));
 
       unsigned int pos = 0;
-      unsigned long ppos = 0;
+      uint64_t ppos = 0;
 
-      unsigned long slots[poplen];
-      slots[poplen-1] = ULONG_MAX;
+      uint64_t slots[poplen];
+      slots[poplen-1] = ULLONG_MAX;
 
       double fitness_sum = 0.0;
       for (int i = 0; i < poplen; ++i) {
@@ -37,9 +38,9 @@ public:
       }
 
       if (poplen != 1)
-         slots[0] = ((double)ULONG_MAX * (population[0] / fitness_sum));
+         slots[0] = ((double)ULLONG_MAX * (population[0]->fitness / fitness_sum));
       for (int i = 1; i < poplen - 1; ++i) {
-         slots[i] = slots[i-1] + ((double)ULONG_MAX * (population[i] / fitness_sum));
+         slots[i] = slots[i-1] + ((double)ULLONG_MAX * (population[i]->fitness / fitness_sum));
       }
 
       while (collected < new_poplen) {
@@ -52,7 +53,7 @@ public:
             this->parents[i] = population[pos]->value;
 
             ppos += pstep;
-            while (ppos > population[pos]->fitness)
+            while (ppos > slots[pos])
                pos += 1;
          }
 

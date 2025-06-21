@@ -6,6 +6,8 @@
 #include "chromosome.h"
 #include "population.h"
 #include <stdlib.h>
+#include <stdint.h>
+#include <vector>
 
 namespace Rhizar16 {
 
@@ -20,17 +22,18 @@ public:
 
    void select(const Chromosome<T> ** const population, int poplen,
                Population<T> & pop, int new_poplen) override {
+      (void)poplen;
 
-      unsigned int collected = 0;
+      int collected = 0;
       while (collected < new_poplen) {
 
-         for (int i = 0; i < Children; ++i) {
+         for (unsigned int i = 0; i < Children; ++i) {
 
             this->children[i] = pop.retrieve()->value;
 
          }
 
-         for (int i = 0; i < Parents; ++i) {
+         for (unsigned int i = 0; i < Parents; ++i) {
 
             this->parents[i] = (population[0])->value;
 
@@ -39,7 +42,7 @@ public:
          this->reproduction(this->parents,this->children);
          
          if (this->mutation) {
-            for (int i = 0; i < Children; ++i) {
+            for (unsigned int i = 0; i < Children; ++i) {
 
                this->mutation(this->children[i]);
 
@@ -64,16 +67,16 @@ public:
    void select(const Chromosome<T> ** const population, int poplen,
                Population<T> & pop, int new_poplen) override {
 
-      unsigned int collected = 0;
+      int collected = 0;
       while (collected < new_poplen) {
 
-         for (int i = 0; i < Children; ++i) {
+         for (unsigned int i = 0; i < Children; ++i) {
 
             this->children[i] = pop.retrieve()->value;
 
          }
 
-         for (int i = 0; i < Parents; ++i) {
+         for (unsigned int i = 0; i < Parents; ++i) {
 
             this->parents[i] = (population[poplen-1])->value;
 
@@ -82,7 +85,7 @@ public:
          this->reproduction(this->parents,this->children);
          
          if (this->mutation) {
-            for (int i = 0; i < Children; ++i) {
+            for (unsigned int i = 0; i < Children; ++i) {
 
                this->mutation(this->children[i]);
 
@@ -124,6 +127,50 @@ public:
    static int as_function_5();
 
 };
+
+namespace TestSelection2 {
+
+void simulate_random_selection(Chromosome<int> * values, int length, int count,
+                               std::vector<Chromosome<int> *> & collected, uint64_t * rnd);
+void simulate_rank_selection(Chromosome<int> * values, int length, int count,
+                             std::vector<Chromosome<int> *> & collected, uint64_t * rnd);
+void simulate_roulette_selection(Chromosome<int> * values, int length, int count,
+                                 std::vector<Chromosome<int> *> & collected, uint64_t * rnd);
+void simulate_stochastic_selection(Chromosome<int> * values, int length, int count,
+                                   std::vector<Chromosome<int> *> & collected, uint64_t * rnd);
+void simulate_tournament_selection(int t_size, Chromosome<int> * values, int length, int count,
+                                   std::vector<Chromosome<int> *> & collected, uint64_t * rnd);
+
+int random_selection_0();
+int random_selection_1();
+int random_selection_2();
+
+int rank_selection_0();
+int rank_selection_1();
+int rank_selection_2();
+int rank_selection_3();
+int rank_selection_4();
+
+int roulette_selection_0();
+int roulette_selection_1();
+int roulette_selection_2();
+int roulette_selection_3();
+int roulette_selection_4();
+
+int stochastic_selection_0();
+int stochastic_selection_1();
+int stochastic_selection_2();
+int stochastic_selection_3();
+int stochastic_selection_4();
+
+int tournament_selection_0();
+int tournament_selection_1();
+int tournament_selection_2();
+int tournament_selection_3();
+int tournament_selection_4();
+
+}
+
 
 }
 

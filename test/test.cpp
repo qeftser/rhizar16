@@ -14,6 +14,8 @@
 #include <thread>
 #include <chrono>
 
+//#define __RHIZAR16_TEST_DISABLE_CURRENT__
+
 int total_tests = 0;
 int passed_tests = 0;
 int ignored_tests = 0;
@@ -37,6 +39,8 @@ int main(void) {
    Rhizar16::print_logo();
 
    int tStart = clock();
+
+#ifndef __RHIZAR16_TEST_DISABLE_CURRENT__
 
    /* ===========================================================
     * UniformRand tests
@@ -450,6 +454,35 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_1());
    __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_2());
    __RHIZAR16_TEST(Rhizar16::TestNumString::interchange_3());
+
+   /* ===========================================================
+    * Selection tests round two
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::random_selection_0());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::random_selection_1());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::random_selection_2());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::rank_selection_0());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::rank_selection_1());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::rank_selection_2());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::rank_selection_3());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::rank_selection_4());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::roulette_selection_0());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::roulette_selection_1());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::roulette_selection_2());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::roulette_selection_3());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::roulette_selection_4());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::stochastic_selection_0());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::stochastic_selection_1());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::stochastic_selection_2());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::stochastic_selection_3());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::stochastic_selection_4());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_0());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_1());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_2());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_3());
+   __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_4());
+
+#endif
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 
