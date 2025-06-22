@@ -8,6 +8,7 @@
 #include "file_opts_test.h"
 #include "wired_test.h"
 #include "num_string_test.h"
+#include "population_options_test.h"
 
 #include <stdio.h>
 #include <time.h>
@@ -482,8 +483,6 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_3());
    __RHIZAR16_TEST(Rhizar16::TestSelection2::tournament_selection_4());
 
-#endif
-
    /* ===========================================================
     * Wired::is_self tests
     * =========================================================== */
@@ -492,6 +491,43 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestWired::wired_self_2());
    __RHIZAR16_TEST(Rhizar16::TestWired::wired_self_3());
 
+   /* ===========================================================
+    * PopulationOptions tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_0());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_1());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_2());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_3());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_4());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_5());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::population_from_file_6());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_0());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_1());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_2());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_3());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_4());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_5());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_6());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_7());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_8());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_9());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_a());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::ms_from_file_b());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_0());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_1());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_2());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_3());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_4());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_5());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_6());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_7());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_8());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_9());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_a());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_b());
+   __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_c());
+
+#endif
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;
 

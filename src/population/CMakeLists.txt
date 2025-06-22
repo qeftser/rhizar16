@@ -15,9 +15,11 @@ target_sources(population
 
    PRIVATE
    ${CMAKE_CURRENT_LIST_DIR}/thread_pond.cpp
+   ${CMAKE_CURRENT_LIST_DIR}/population_options.cpp
 
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}/population.h
+   ${CMAKE_CURRENT_LIST_DIR}/population_options.h
    ${CMAKE_CURRENT_LIST_DIR}/thread_pond.h
    ${CMAKE_CURRENT_LIST_DIR}/concurrent_queue.h
 
@@ -27,6 +29,8 @@ target_include_directories(population
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}
 )
+
+target_link_libraries(population file wired base)
 
 if (WIN32)
 
