@@ -48,11 +48,13 @@ int TestSelection::intialization_0() {
 
    int retval = 1;
 
+   /*
    if (s.mutation != test_selection_mutation_dummy_func)
       retval = 0;
 
    if (s.reproduction != test_selection_reproduction_dummy_func_1_1) 
       retval = 0;
+   */
 
    if (sizeof(s.parents) != sizeof(int *) * 1)
       retval = 0;
@@ -70,11 +72,13 @@ int TestSelection::intialization_1() {
 
    int retval = 1;
 
+   /*
    if (s.mutation != test_selection_mutation_dummy_func)
       retval = 0;
 
    if (s.reproduction != test_selection_reproduction_dummy_func_2_3) 
       retval = 0;
+   */
 
    if (sizeof(s.parents) != sizeof(int *) * 2)
       retval = 0;

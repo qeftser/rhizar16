@@ -4,7 +4,7 @@
 #define __RHIZAR16__RANDOM_SELECTION__
 #include "selection.h"
 #include "population.h"
-#include "util.h"
+#include "utils.h"
 
 namespace Rhizar16 {
 
@@ -16,8 +16,8 @@ private:
 
 public:
 
-   RandomSelector(void (* reproduction)(T ** const parents, T ** children),
-                  void (* mutation)(T * chromosome) = NULL) :
+   RandomSelector(std::function<void(T ** const parents, T ** children)> reproduction,
+                  std::function<void(T * chromosome)> mutation = nullptr) :
          Selector<T,Parents,Children>(reproduction,mutation) {}
 
    void select(const Chromosome<T> ** const population, int poplen,

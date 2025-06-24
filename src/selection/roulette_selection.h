@@ -3,7 +3,7 @@
 
 #define __RHIZAR16_ROULETTE_SELECTION__
 
-#include "selector.h"
+#include "selection.h"
 #include "population.h"
 #include "uniform_rand.h"
 #include <stdlib.h>
@@ -20,8 +20,8 @@ private:
 
 public:
 
-   RouletteSelector(void (* reproduction)(T ** const parents, T ** children),
-                    void (* mutation)(T * chromosome) = NULL) :
+   RouletteSelector(std::function<void(T ** const parents, T ** children)> reproduction,
+                    std::function<void(T * chromosome)> mutation = nullptr) :
          Selector<T,Parents,Children>(reproduction,mutation) {}
 
    void select(const Chromosome<T> ** const population, int poplen,

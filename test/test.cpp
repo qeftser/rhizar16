@@ -447,6 +447,7 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_1());
    __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_2());
    __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_3());
+   __RHIZAR16_TEST(Rhizar16::TestNumString::partially_matched_crossover_4());
    __RHIZAR16_TEST(Rhizar16::TestNumString::noise_0());
    __RHIZAR16_TEST(Rhizar16::TestNumString::noise_1());
    __RHIZAR16_TEST(Rhizar16::TestNumString::noise_2());

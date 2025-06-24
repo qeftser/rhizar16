@@ -17,6 +17,8 @@ target_sources(selection
 
 )
 
+target_link_libraries(selection population)
+
 target_include_directories(selection
    PUBLIC
    ${CMAKE_CURRENT_LIST_DIR}

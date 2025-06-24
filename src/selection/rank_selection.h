@@ -4,7 +4,7 @@
 #define __RHIZAR16_RANK_SELECTION__
 #include "selection.h"
 #include "population.h"
-#include "util.h"
+#include "utils.h"
 
 namespace Rhizar16 {
 
@@ -16,8 +16,8 @@ private:
 
 public:
 
-   RankSelector(void (* reproduction)(T ** const parents, T ** children),
-                 void (* mutation)(T * chromosome) = NULL) :
+   RankSelector(std::function<void(T ** const parents, T ** children)> reproduction,
+                std::function<void(T * chromosome)> mutation = nullptr) :
          Selector<T,Parents,Children>(reproduction,mutation) {}
 
    void select(const Chromosome<T> ** const population, int poplen,
@@ -32,8 +32,8 @@ public:
          }
 
          for (int i = 0; i < Parents; ++i) {
-            Chromosome<T> * opt0 = population[r.random() % poplen];
-            Chromosome<T> * opt1 = population[r.random() % poplen];
+            const Chromosome<T> * opt0 = population[r.random() % poplen];
+            const Chromosome<T> * opt1 = population[r.random() % poplen];
 
             if (opt0->fitness < opt1->fitness)
                this->parents[i] = opt1->value;

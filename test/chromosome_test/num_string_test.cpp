@@ -195,14 +195,21 @@ void NumStringSimulation<T,N>::partially_matched_crossover(NumString<T,N> ** con
    uint32_t repl_pos0 = crossover_one;
    uint32_t repl_pos1 = crossover_one;
 
-   for (uint32_t i = 0; i < N; ++i) {
+   while (seen1.count(parents[0]->values[repl_pos0])) repl_pos0 += 1;
+   while (seen0.count(parents[1]->values[repl_pos1])) repl_pos1 += 1;
+
+   for (uint32_t i = 0; i < N - (crossover_two - crossover_one); ++i) {
       uint32_t internal_pos = (i + crossover_two) % N;
 
-      if (seen1.count(parents[0]->values[internal_pos]))
+      if (seen1.count(parents[0]->values[internal_pos])) {
          children[0]->values[internal_pos] = parents[0]->values[repl_pos0++];
+         while (seen1.count(parents[0]->values[repl_pos0])) repl_pos0 += 1;
+      }
 
-      if (seen0.count(parents[1]->values[internal_pos]))
+      if (seen0.count(parents[1]->values[internal_pos])) {
          children[1]->values[internal_pos] = parents[1]->values[repl_pos1++];
+         while (seen0.count(parents[1]->values[repl_pos1])) repl_pos1 += 1;
+      }
    }
 }
 
@@ -1667,6 +1674,48 @@ int partially_matched_crossover_3() {
    for (int i = 0; i < 6; ++i)
       if (p0.values[i] != -i || p1.values[i] != -i)
          retval = 0;
+
+   return retval;
+}
+
+int partially_matched_crossover_4() {
+   NumString<int,12> p0, p1, c0, c1;
+   p0.values[ 0] = 0; p1.values[ 0] = 0;
+   p0.values[ 1] = 1; p1.values[ 1] = 1;
+   p0.values[ 2] = 39; p1.values[ 2] = 36;
+   p0.values[ 3] = 3; p1.values[ 3] = 10;
+   p0.values[ 4] = 22; p1.values[ 4] = 4;
+   p0.values[ 5] = 5; p1.values[ 5] = 5;
+   p0.values[ 6] = 6; p1.values[ 6] = 6;
+   p0.values[ 7] = 7; p1.values[ 7] = 7;
+   p0.values[ 8] = 8; p1.values[ 8] = 8;
+   p0.values[ 9] = 9; p1.values[ 9] = 2;
+   p0.values[10] = 15; p1.values[10] = 3;
+   p0.values[11] = 11; p1.values[11] = 11;
+
+   NumString<int,12> * p[2], * c[2];
+   p[0] = &p0; p[1] = &p1;
+   c[0] = &c0; c[1] = &c1;
+
+   uint64_t rnd[9] = { 0,5 };
+
+   NumStringSimulation<int,12>::partially_matched_crossover((NumString<int,12> **)&p,(NumString<int,12> **)&c,rnd);
+
+   int retval = 1;
+
+   if (c0.values[ 0] !=  0 || c1.values[ 0] !=  0 ||
+       c0.values[ 1] !=  1 || c1.values[ 1] !=  1 ||
+       c0.values[ 2] != 36 || c1.values[ 2] != 39 ||
+       c0.values[ 3] != 10 || c1.values[ 3] !=  3 ||
+       c0.values[ 4] !=  4 || c1.values[ 4] != 22 ||
+       c0.values[ 5] !=  5 || c1.values[ 5] !=  5 ||
+       c0.values[ 6] !=  6 || c1.values[ 6] !=  6 ||
+       c0.values[ 7] !=  7 || c1.values[ 7] !=  7 ||
+       c0.values[ 8] !=  8 || c1.values[ 8] !=  8 ||
+       c0.values[ 9] !=  9 || c1.values[ 9] !=  2 ||
+       c0.values[10] != 15 || c1.values[10] != 36 ||
+       c0.values[11] != 11 || c1.values[11] != 11)
+      retval = 0;
 
    return retval;
 }

@@ -14,8 +14,8 @@ template<typename T, unsigned Parents, unsigned Children>
 class StochasticSelector : public Selector<T,Parents,Children> {
 public:
 
-   StochasticSelector(void (* reproduction)(T ** const parents, T ** children),
-                  void (* mutation)(T * chromosome) = NULL) :
+   StochasticSelector(std::function<void(T ** const parents, T ** children)> reproduction,
+                      std::function<void(T * chromosome)> mutation = nullptr) :
          Selector<T,Parents,Children>(reproduction,mutation) {}
 
    void select(const Chromosome<T> ** const population, int poplen,

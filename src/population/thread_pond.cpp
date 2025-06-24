@@ -213,7 +213,7 @@ void * ThreadPond::scheduler_runtime(void * init) {
                 * mark the memory as freed.                        */
                pthread_sigmask(SIG_BLOCK,&free_mask,NULL);
 
-               free(runtime->task_ptr[i]);
+               delete runtime->task_ptr[i];
                runtime->task_ptr[i] = NULL;
 
                runtime->active->fetch_add(-1);
@@ -336,10 +336,10 @@ ThreadPond::~ThreadPond() {
    }
 
    for (uint32_t i = 0; i < thread_count; ++i)
-      free(task_ptr[i]);
+      delete task_ptr[i];
 
    while (!task_queue.empty()) {
-      free(task_queue.pop());
+      delete task_queue.pop();
    }
 
    free(task_ptr);
@@ -389,11 +389,7 @@ bool ThreadPond::wait(std::chrono::nanoseconds timeout) {
 
 void ThreadPond::queue(std::function<void(void *)> func, void * arg) {
 
-   task * new_task = (task *)malloc(sizeof(task));
-   bzero(new_task,sizeof(task));
-
-   new_task->func = func;
-   new_task->arg  = arg;
+   task * new_task = new task{func,arg};
 
    task_queue.push(new_task);
    pthread_kill(scheduler,__RHIZAR16_THREAD_SIGNAL__);

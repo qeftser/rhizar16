@@ -14,6 +14,10 @@ using std::placeholders::_4;
 
 namespace Rhizar16 {
 
+/* not exactly sure why I need this... */
+template<typename T>
+class Population;
+
 /* a method of selection used to fill another generation of a
  * population. This is tightly coupled with the reproduction
  * method in hopes of increasing the efficiency of the operations */
@@ -25,15 +29,15 @@ class Selector {
 
 protected: 
 
-   void (* mutation)(T * chromosome);
-   void (* reproduction)(T ** const parents, T ** children);
+   std::function<void(T * chromosome)> mutation;
+   std::function<void(T ** const parents, T ** children)> reproduction;
    T * parents[Parents];
    T * children[Children];
 
 public:
 
-   Selector(void (* reproduction)(T ** const parents, T ** children),
-            void (* mutation)(T * chromosome) = NULL);
+   Selector(std::function<void(T ** const parents, T ** children)> reproduction,
+            std::function<void(T * chromosome)> mutation = nullptr);
 
    virtual void select(const Chromosome<T> ** const population, int poplen,
                        Population<T> & pop, int new_poplen) = 0;
@@ -43,8 +47,8 @@ public:
 };
 
 template<typename T, unsigned P, unsigned C>
-Selector<T,P,C>::Selector(void (* reproduction)(T ** const parents, T ** children),
-                          void (* mutation)(T * chromosome)) {
+Selector<T,P,C>::Selector(std::function<void(T ** const parents, T ** children)> reproduction,
+                          std::function<void(T * chromosome)> mutation) {
    this->reproduction = reproduction;
    this->mutation = mutation;
 }

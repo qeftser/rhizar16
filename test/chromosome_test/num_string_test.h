@@ -75,6 +75,7 @@ int partially_matched_crossover_0();
 int partially_matched_crossover_1();
 int partially_matched_crossover_2();
 int partially_matched_crossover_3();
+int partially_matched_crossover_4();
 
 int noise_0();
 int noise_1();

@@ -148,6 +148,7 @@ void NumString<T,N>::precedence_preservative_crossover(NumString<T,N> ** const p
       children[0]->values[N - 1] = parents[0]->values[p0_head];
 
    }
+
 }
 
 /* Note: due to the way this function is written (and indirectly what it is intended for) it
@@ -229,19 +230,26 @@ void NumString<T,N>::partially_matched_crossover(NumString<T,N> ** const parents
    uint32_t repl_pos0 = crossover_one;
    uint32_t repl_pos1 = crossover_one;
 
-   for (uint32_t i = 0; i < N; ++i) {
+   while (seen1.count(parents[0]->values[repl_pos0])) repl_pos0 += 1;
+   while (seen0.count(parents[1]->values[repl_pos1])) repl_pos1 += 1;
+
+   for (uint32_t i = 0; i < N - (crossover_two - crossover_one); ++i) {
       uint32_t internal_pos = (i + crossover_two) % N;
 
-      if (seen1.count(parents[0]->values[internal_pos]))
+      if (seen1.count(parents[0]->values[internal_pos])) {
          children[0]->values[internal_pos] = parents[0]->values[repl_pos0++];
+         while (seen1.count(parents[0]->values[repl_pos0])) repl_pos0 += 1;
+      }
 
-      if (seen0.count(parents[1]->values[internal_pos]))
+      if (seen0.count(parents[1]->values[internal_pos])) {
          children[1]->values[internal_pos] = parents[1]->values[repl_pos1++];
+         while (seen0.count(parents[1]->values[repl_pos1])) repl_pos1 += 1;
+      }
    }
 }
 
 template<typename T, unsigned N>
-std::function<void(NumString<T,N> *)> noise(std::function<T()> generator, double probability) {
+std::function<void(NumString<T,N> *)> NumString<T,N>::noise(std::function<T()> generator, double probability) {
 
    assert(probability <= 1.0 && probability >= 0.0 
          && "NumString: probability for function 'noise' must be in the range [0.0, 1.0]");
@@ -260,7 +268,7 @@ std::function<void(NumString<T,N> *)> noise(std::function<T()> generator, double
 }
 
 template<typename T, unsigned N>
-std::function<void(NumString<T,N> *)> interchange(double probability) {
+std::function<void(NumString<T,N> *)> NumString<T,N>::interchange(double probability) {
 
    assert(probability <= 1.0 && probability >= 0.0 
          && "NumString: probability for function 'interchange' must be in the range [0.0, 1.0]");
