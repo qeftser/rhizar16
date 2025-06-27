@@ -528,6 +528,21 @@ int main(void) {
    __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_b());
    __RHIZAR16_TEST(Rhizar16::TestPopulationOptions::distributed_from_file_c());
 
+   /* ===========================================================
+    * Population round 3 tests
+    * =========================================================== */
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_0());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_1());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_2());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_3());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_4());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_5());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_6());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_7());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::tp_simulate_8());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::reset_0());
+   __RHIZAR16_TEST(Rhizar16::TestPopulation::initialize_1());
+
 #endif
 
    double elapsed = (double)(clock() - tStart) / CLOCKS_PER_SEC;

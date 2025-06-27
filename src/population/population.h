@@ -14,12 +14,14 @@
 #include <stddef.h>
 #include <float.h>
 #include <math.h>
+#include <assert.h>
 #include <chrono>
 #include <functional>
 #include "utils.h"
 #include "chromosome.h"
 #include "selection.h"
 #include "population_options.h"
+#include "thread_pond.h"
 
 namespace Rhizar16 {
 
@@ -31,6 +33,10 @@ class Population {
    /* for testing */
    friend class TestPopulation;
    friend class TestSelection;
+
+   /* for ease of implimentation */
+   friend class DistributedPopulation;
+   friend class MasterSlavePopulation;
 
 private:
 
@@ -48,6 +54,8 @@ private:
 
    PopulationOptions * options;
 
+   ThreadPond * pond;
+
    double time_elapsed;
    std::chrono::time_point<std::chrono::steady_clock> time_start;
    uint64_t generation;
@@ -63,21 +71,18 @@ private:
    vector before;
    vector after;
 
-   /*
-   void (* evolution)(const Chromosome<T> ** const population, int poplen,
-                      const Population<T> & pop, int new_poplen) = NULL;
-                      */
    std::function<void(const Chromosome<T> ** const population, int poplen,
-                      Population<T> & pop, int new_poplen)> evolution;
-   //double (* fitness)(const T * const chromosome) = NULL;
-   std::function<double(const T * const chromosome)> fitness;
+                      Population<T> & pop, int new_poplen)> evolution = nullptr;
+   std::function<double(const T * const chromosome)> fitness = nullptr;
+   std::function<void(void *)> thread_fitness = nullptr;
 
-   void grow_population(vector * generation, int new_len);
-   void try_expand_vector(vector * vec, int new_len, size_t multiplier);
+   void grow_population(vector * generation, uint32_t new_len);
+   void try_expand_vector(vector * vec, uint32_t new_len, size_t multiplier);
    void sort_population_helper(Chromosome<T> ** A, int lo, int hi);
 
 public:
 
+   Population(std::string path, bool verbose = true);
    Population(PopulationOptions * options);
    ~Population();
 
@@ -89,6 +94,7 @@ public:
    Chromosome<T> * retrieve();
 
    bool finished();
+   void reset();
 
    const Chromosome<T> ** population();
    uint32_t poplen();
@@ -107,7 +113,7 @@ public:
 };
 
 template<typename T>
-inline void Population<T>::grow_population(vector * generation, int new_len) {
+inline void Population<T>::grow_population(vector * generation, uint32_t new_len) {
 
    if (new_len < generation->length)
       return;
@@ -118,19 +124,19 @@ inline void Population<T>::grow_population(vector * generation, int new_len) {
 
    if (generation->data == NULL) {
 
-      RHIZAR16_ERROR("%s, failed to expand memory to %db in Population<T>::grow_population\n",
+      RHIZAR16_ERROR("Population: %s, failed to expand memory to %db in Population<T>::grow_population\n",
                      strerror(errno), new_len * sizeof(Chromosome<T> *));
       exit(errno);
    }
 
    generation->length = new_len;
 
-   for (int i = old_length; i < new_len; ++i) {
+   for (uint32_t i = old_length; i < new_len; ++i) {
       Chromosome<T> * new_chromosome = (Chromosome<T> *)malloc(sizeof(struct Chromosome<T>));
 
       if (new_chromosome == NULL) {
 
-         RHIZAR16_ERROR("%s, failed to allocate chromosome in Population<T>::grow_population\n",
+         RHIZAR16_ERROR("Population: %s, failed to allocate chromosome in Population<T>::grow_population\n",
                         strerror(errno));
          exit(errno);
       }
@@ -139,13 +145,13 @@ inline void Population<T>::grow_population(vector * generation, int new_len) {
       ((Chromosome<T> **)generation->data)[i] = new_chromosome;
    }
 
-   for (int i = old_length; i < new_len; ++i) {
+   for (uint32_t i = old_length; i < new_len; ++i) {
 
       T * new_value = new T;
 
       if (new_value == NULL) {
 
-         RHIZAR16_ERROR("%s, failed to allocate value to chromosome in Population<T>::grow_population\n",
+         RHIZAR16_ERROR("Population: %s, failed to allocate value to chromosome in Population<T>::grow_population\n",
                         strerror(errno));
          exit(errno);
       }
@@ -155,7 +161,7 @@ inline void Population<T>::grow_population(vector * generation, int new_len) {
 }
 
 template<typename T>
-inline void Population<T>::try_expand_vector(vector * vec, int new_len, size_t multiplier) {
+inline void Population<T>::try_expand_vector(vector * vec, uint32_t new_len, size_t multiplier) {
 
    if (vec->length >= new_len)
       return;
@@ -167,7 +173,7 @@ inline void Population<T>::try_expand_vector(vector * vec, int new_len, size_t m
 
       if (vec->data == NULL) {
 
-         RHIZAR16_ERROR("%s, failed to expand memory to %db in Population<T>::try_expand_vector\n",
+         RHIZAR16_ERROR("Population: %s, failed to expand memory to %db in Population<T>::try_expand_vector\n",
                         strerror(errno), new_len * multiplier);
          exit(errno);
       }
@@ -221,6 +227,54 @@ void Population<T>::sort_population() {
 }
 
 template<typename T>
+Population<T>::Population(std::string path, bool verbose) {
+
+   PopulationOptions * opts = (PopulationOptions *)malloc(sizeof(PopulationOptions));
+
+   if (!PopulationOption::from_file(path,opts,verbose)) {
+      if (verbose)
+         RHIZAR16_ERROR("Initializing Population: Failure loading config\n");
+      exit(EXIT_FAILURE);
+   }
+
+   opts->free_on_exit = 1;
+
+   options = opts;
+
+   time_start = std::chrono::steady_clock::now();
+   time_elapsed = 0.0;
+   generation = 0;
+
+   memset(&generation_A,0,sizeof(vector));
+   memset(&generation_B,0,sizeof(vector));
+   memset(&before,0,sizeof(vector));
+   memset(&after,0,sizeof(vector));
+
+   grow_population(&generation_A, options->population_size + __RHIZAR16_POPULATION_GENERATION_GUTTER__);
+   grow_population(&generation_B, options->population_size + __RHIZAR16_POPULATION_GENERATION_GUTTER__);
+   generation_A.end = options->population_size;
+   generation_B.end = options->population_size;
+
+   curr_generation = &generation_A;
+   next_generation = &generation_B;
+
+   this->options = options;
+
+   switch (options->thread_count) {
+      case PopulationOption::ThreadCount::THREAD_COUNT_NONE:
+      case 1:
+         pond = NULL;
+         break;
+      case PopulationOption::ThreadCount::THREAD_COUNT_AUTO:
+         pond = new ThreadPond();
+         break;
+      default:
+         pond = new ThreadPond(options->thread_count);
+         break;
+   }
+}
+
+template<typename T>
 Population<T>::Population(PopulationOptions * options) {
    time_start = std::chrono::steady_clock::now();
    time_elapsed = 0.0;
@@ -240,12 +294,35 @@ Population<T>::Population(PopulationOptions * options) {
    next_generation = &generation_B;
 
    this->options = options;
+
+   switch (options->thread_count) {
+      case PopulationOption::ThreadCount::THREAD_COUNT_NONE:
+      case 1:
+         this->options->thread_count = 0;
+         pond = NULL;
+         break;
+      case PopulationOption::ThreadCount::THREAD_COUNT_AUTO:
+         pond = new ThreadPond();
+         break;
+      default:
+         pond = new ThreadPond(options->thread_count);
+         break;
+   }
+}
+
+template<typename T>
+void Population<T>::reset() {
+   time_start = std::chrono::steady_clock::now();
+   time_elapsed = 0.0;
+   generation = 0;
+   avg_fitness =  DBL_MAX;
+   max_fitness = -DBL_MAX;
 }
 
 template<typename T>
 Population<T>::~Population() {
 
-   for (int i = 0; i < generation_A.length; ++i) {
+   for (uint32_t i = 0; i < generation_A.length; ++i) {
 
       delete ((Chromosome<T> **)generation_A.data)[i]->value;
       free(((Chromosome<T> **)generation_A.data)[i]);
@@ -253,7 +330,7 @@ Population<T>::~Population() {
    }
    free(generation_A.data);
 
-   for (int i = 0; i < generation_B.length; ++i) {
+   for (uint32_t i = 0; i < generation_B.length; ++i) {
 
       delete ((Chromosome<T> **)generation_B.data)[i]->value;
       free(((Chromosome<T> **)generation_B.data)[i]);
@@ -261,20 +338,24 @@ Population<T>::~Population() {
    }
    free(generation_B.data);
 
-   for (int i = 0; i < before.end; ++i) {
+   for (uint32_t i = 0; i < before.end; ++i) {
 
       free(((manipulator **)before.data)[i]);
 
    }
    free(before.data);
 
-   for (int i = 0; i < after.end; ++i) {
+   for (uint32_t i = 0; i < after.end; ++i) {
 
       free(((manipulator **)after.data)[i]);
 
    }
    free(after.data);
 
+   if (options->free_on_exit)
+      free(options);
+
+   delete pond;
 }
 
 template<typename T>
@@ -312,7 +393,7 @@ void Population<T>::add_before(int weight, int (* func)(Chromosome<T> ** pop, in
 
    if (new_func == NULL) {
 
-      RHIZAR16_ERROR("%s, failed to allocate memory for struct manipulator in Population::add_before\n",
+      RHIZAR16_ERROR("Population: %s, failed to allocate memory for struct manipulator in Population::add_before\n",
                       strerror(errno));
       exit(errno);
    }
@@ -345,7 +426,7 @@ void Population<T>::add_after(int weight, int (* func)(Chromosome<T> ** pop, int
 
    if (new_func == NULL) {
 
-      RHIZAR16_ERROR("%s, failed to allocate memory for struct manipulator in Population::add_after\n",
+      RHIZAR16_ERROR("Population: %s, failed to allocate memory for struct manipulator in Population::add_after\n",
                       strerror(errno));
       exit(errno);
    }
@@ -383,6 +464,13 @@ void Population<T>::set_evolution(std::function<void(const Chromosome<T> ** cons
 template<typename T>
 void Population<T>::set_fitness(std::function<double(const T * const chromosome)> fitness) {
    this->fitness = fitness;
+   this->thread_fitness = [fitness](void * arg){ 
+
+      Chromosome<T> * chromosome = (Chromosome<T> *)arg;
+
+      chromosome->fitness = fitness(chromosome->value);
+
+   };
 }
 
 template<typename T>
@@ -391,21 +479,21 @@ bool Population<T>::finished() {
    double l_avg_fitness = 0.0;
    max_fitness = 0.0;
 
-   if (options->max_fitness > 0.0 || options->min_fitness_change > 0.0) {
+   //if (options->max_fitness > 0.0 || options->min_fitness_change > 0.0) {
 
-      Chromosome<T> ** head = (Chromosome<T> **)curr_generation->data;
-      for (int i = 0; i < curr_generation->end; ++i) {
+   Chromosome<T> ** head = (Chromosome<T> **)curr_generation->data;
+   for (uint32_t i = 0; i < curr_generation->end; ++i) {
 
-         if ((*head)->fitness > max_fitness)
-            max_fitness = (*head)->fitness;
+      if ((*head)->fitness > max_fitness)
+         max_fitness = (*head)->fitness;
 
-         l_avg_fitness += (*head)->fitness;
+      l_avg_fitness += (*head)->fitness;
 
-         ++head;
-      }
-
-      l_avg_fitness /= curr_generation->end;
+      ++head;
    }
+
+   l_avg_fitness /= curr_generation->end;
+   //}
 
    if (options->maximum_generation && generation > options->maximum_generation)
       return true;
@@ -430,9 +518,12 @@ bool Population<T>::finished() {
 template<typename T>
 void Population<T>::initialize(void (* setup)(T * chromosome)) {
 
+   assert(fitness != nullptr && "Rhizar16::Population::initialize: fitness function "
+                                "must be set via set_fitness() before calling initialize()");
+
    Chromosome<T> ** head = (Chromosome<T> **)curr_generation->data;
 
-   for (int i = 0; i < curr_generation->end; ++i) {
+   for (uint32_t i = 0; i < curr_generation->end; ++i) {
 
       setup((*head)->value);
       (*head)->fitness = fitness((*head)->value);
@@ -456,11 +547,23 @@ void Population<T>::evaluate_fitness() {
 
    Chromosome<T> ** head = (Chromosome<T> **)curr_generation->data;
 
-   for (int i = 0; i < curr_generation->end; ++i) {
+   if (options->thread_count) {
+      for (uint32_t i = 0; i < curr_generation->end; ++i) {
 
-      (*head)->fitness = fitness((*head)->value);
+         pond->queue(thread_fitness,(void *)(*head));
 
-      ++head;
+         ++head;
+      }
+
+      pond->wait();
+   }
+   else {
+      for (uint32_t i = 0; i < curr_generation->end; ++i) {
+
+         (*head)->fitness = fitness((*head)->value);
+
+         ++head;
+      }
    }
 
 }
@@ -471,8 +574,8 @@ void Population<T>::perform_evolution(int pool_size) {
    if (pool_size <= 0)
       pool_size = curr_generation->end;
 
-   int elitism = options->elitism_count;
-   int popsize = options->population_size;
+   uint32_t elitism = options->elitism_count;
+   uint32_t popsize = options->population_size;
 
    if (popsize + __RHIZAR16_POPULATION_GENERATION_GUTTER__ > next_generation->length)
       grow_population(next_generation,popsize + __RHIZAR16_POPULATION_GENERATION_GUTTER__);
@@ -489,7 +592,7 @@ void Population<T>::perform_evolution(int pool_size) {
 
       /* copy the best values over given elitism. */
       T * temp;
-      for (int i = 0; i < elitism; ++i) {
+      for (uint32_t i = 0; i < elitism; ++i) {
 
          temp = ((Chromosome<T> **)curr_generation->data)[i]->value;
          ((Chromosome<T> **)curr_generation->data)[i]->value = ((Chromosome<T> **)next_generation->data)[i]->value;
@@ -504,15 +607,27 @@ void Population<T>::simulate(int iterations) {
 
    while (!finished() && iterations-- != 0) {
 
+      switch (options->tracking_mode) {
+         case PopulationOption::TrackingMode::TRACKING_MODE_VERBOSE:
+            fprintf(stderr,"elapsed: %f, max fitness: %f, average fitness: %f, generation: %lu\r",
+                    time_elapsed,max_fitness,avg_fitness,generation);
+            break;
+         case PopulationOption::TrackingMode::TRACKING_MODE_LIVE:
+            break;
+         case PopulationOption::TrackingMode::TRACKING_MODE_NONE:
+         default:
+            break;
+      }
+
       /* call all before functions, potentially reducing the size of the mating pool */
       int pool_size = curr_generation->end;
-      for (int i = 0; i < before.end; ++i) {
+      for (uint32_t i = 0; i < before.end; ++i) {
          int res = 
             ((manipulator **)before.data)[i]->func((Chromosome<T> **)curr_generation->data,
                                                    pool_size,
                                                    ((manipulator **)before.data)[i]->arg);
          if (res < 0) {
-            RHIZAR16_WARN("before function returned error in Population<T>::simulate(): %d\n",res);
+            RHIZAR16_WARN("Population: before function returned error in Population<T>::simulate(): %d\n",res);
          }
          else if (res > 0) {
             pool_size = res;
@@ -523,13 +638,13 @@ void Population<T>::simulate(int iterations) {
       perform_evolution(pool_size);
 
       /* call all after functions */
-      for (int i = 0; i < after.end; ++i) {
+      for (uint32_t i = 0; i < after.end; ++i) {
          int res = 
             ((manipulator **)after.data)[i]->func((Chromosome<T> **)next_generation->data,
                                                    next_generation->end,
                                                    ((manipulator **)after.data)[i]->arg);
          if (res < 0) {
-            RHIZAR16_WARN("after function returned error in Population<T>::simulate(): %d\n",res);
+            RHIZAR16_WARN("Population: after function returned error in Population<T>::simulate(): %d\n",res);
          }
       }
 

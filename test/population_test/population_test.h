@@ -82,6 +82,20 @@ public:
    static int simulate_7();
    static int simulate_8();
 
+   static int tp_simulate_0();
+   static int tp_simulate_1();
+   static int tp_simulate_2();
+   static int tp_simulate_3();
+   static int tp_simulate_4();
+   static int tp_simulate_5();
+   static int tp_simulate_6();
+   static int tp_simulate_7();
+   static int tp_simulate_8();
+
+   static int reset_0();
+
+   static int initialize_1();
+
 };
 
 }

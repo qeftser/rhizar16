@@ -1554,5 +1554,373 @@ int TestPopulation::simulate_8() {
    return retval;
 }
 
+int TestPopulation::tp_simulate_0() {
+
+   PopulationOptions pop;
+   pop.population_size = 100;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_selection_mutation_dummy_func);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.initialize(test_population_count_10);
+   p.sort_population();
+   p.simulate(1);
+
+   int retval = 1;
+
+   for (int i = 0; i < 100; ++i) {
+      if (p.population()[i]->fitness != 40.0 || *(p.population()[i]->value) != 4)
+         retval = 0;
+   }
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_1() {
+
+   PopulationOptions pop;
+   pop.population_size = 100;
+   pop.maximum_generation = 100;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_selection_mutation_dummy_func);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.initialize(test_population_count_10);
+   p.sort_population();
+   p.simulate();
+
+   int retval = 1;
+
+   for (int i = 0; i < 100; ++i) {
+      if (p.population()[i]->fitness != 40.0 || *(p.population()[i]->value) != 4)
+         retval = 0;
+   }
+
+   if (p.generation != 101)
+      retval = 0;
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_2() {
+
+   PopulationOptions pop;
+   pop.population_size = 100;
+   pop.maximum_elapsed = 0.01;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_selection_mutation_dummy_func);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.initialize(test_population_count_10);
+   p.sort_population();
+   p.simulate();
+
+   int retval = 1;
+
+   for (int i = 0; i < 100; ++i) {
+      if (p.population()[i]->fitness != 40.0 || *(p.population()[i]->value) != 4)
+         retval = 0;
+   }
+
+   if (p.time_elapsed < pop.maximum_elapsed)
+      retval = 0;
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_3() {
+
+   PopulationOptions pop;
+   pop.population_size = 100;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_population_mutation_none);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.add_before(5,test_population_multiply_2,NULL);
+   p.add_before(10,test_population_add_1,NULL);
+
+   p.initialize(test_population_dummy_setup_func);
+   p.simulate(1);
+
+   int retval = 1;
+
+   for (int i = 0; i < 100; ++i) {
+      if (p.population()[i]->fitness != 120.0 || *(p.population()[i]->value) != 12)
+         retval = 0;
+   }
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_4() {
+
+   PopulationOptions pop;
+   pop.population_size = 10000;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_population_mutation_none);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.add_after(5,test_population_add_1,NULL);
+   p.add_after(10,test_population_multiply_2,NULL);
+
+   p.initialize(test_population_dummy_setup_func);
+   p.simulate(1);
+
+   int retval = 1;
+
+   for (int i = 0; i < 10000; ++i) {
+      if (p.population()[i]->fitness != 110.0 || *(p.population()[i]->value) != 11)
+         retval = 0;
+   }
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_5() {
+
+   PopulationOptions pop;
+   pop.population_size = 10000;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   LastOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                test_population_mutation_none);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.add_before(0,test_population_set_poplen_5,NULL);
+
+   p.initialize(test_population_dummy_setup_func);
+
+   *((Chromosome<int> **)p.curr_generation->data)[4]->value = 1;
+   for (int i = 5; i < 10000; ++i)
+      *((Chromosome<int> **)p.curr_generation->data)[i]->value = 0;
+
+   p.simulate(1);
+
+   int retval = 1;
+
+   for (int i = 0; i < 10000; ++i) {
+      if (p.population()[i]->fitness != 10.0 || *(p.population()[i]->value) != 1)
+         retval = 0;
+   }
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_6() {
+
+   PopulationOptions pop;
+   pop.population_size = 10;
+   pop.elitism_count = 3;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   LastOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                test_population_mutation_none);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.add_before(0,test_population_set_poplen_5,NULL);
+
+   p.initialize(test_population_dummy_setup_func);
+
+   for (int i = 4; i < 10; ++i)
+      *((Chromosome<int> **)p.curr_generation->data)[i]->value = 1;
+
+   p.simulate(1);
+
+   int retval = 1;
+
+   for (int i = 0; i < 3; ++i) {
+      if (p.population()[i]->fitness != 50.0 || *(p.population()[i]->value) != 5)
+         retval = 0;
+   }
+
+   for (int i = 3; i < 10; ++i) {
+      if (p.population()[i]->fitness != 10.0 || *(p.population()[i]->value) != 1)
+         retval = 0;
+   }
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_7() {
+
+   PopulationOptions pop;
+   pop.population_size = 10;
+   pop.max_fitness = 40.0;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_population_mutation_none);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.initialize(test_population_dummy_setup_func);
+
+   p.simulate();
+
+   int retval = 1;
+
+   if (p.max_fitness < 40.0)
+      retval = 0;
+
+   return retval;
+}
+
+int TestPopulation::tp_simulate_8() {
+
+   PopulationOptions pop;
+   pop.population_size = 10;
+   pop.min_fitness_change = 1.0;
+   pop.thread_count = PopulationOption::ThreadCount::THREAD_COUNT_AUTO;
+
+   Population<int> p = Population<int>(&pop);
+
+   FirstOnlySelection<int,1,1> s(test_selection_reproduction_dummy_func_1_1,
+                                 test_population_mutation_none);
+   p.set_fitness(test_population_dummy_fitness_eval);
+   p.set_evolution(s.as_function());
+
+   p.initialize(test_population_dummy_setup_func);
+
+   p.simulate();
+
+   int retval = 1;
+
+   if (p.avg_fitness != 50.0)
+      retval = 0;
+
+   return retval;
+}
+
+int TestPopulation::reset_0() {
+
+   PopulationOptions pop;
+   pop.population_size = 10;
+
+   Population<int> p = Population<int>(&pop);
+   p.generation = 2000;
+   p.time_elapsed = 1000;
+   p.avg_fitness = 234;
+   p.max_fitness = 943;
+
+   p.reset();
+
+   int retval = 1;
+
+   if (p.generation != 0)
+      retval = 0;
+   if (p.time_elapsed != 0)
+      retval = 0;
+   if (p.avg_fitness != DBL_MAX)
+      retval = 0;
+   if (p.max_fitness != -DBL_MAX)
+      retval = 0;
+
+   return retval;
+}
+
+int TestPopulation::initialize_1() {
+
+   Population<int> p = Population<int>("poptions/pop_init.ini");
+
+   int retval = 1;
+
+   if (p.options->population_size != 23094)
+      retval = 0;
+   if (p.options->maximum_generation != 72034)
+      retval = 0;
+   if (p.options->maximum_elapsed != 234.42)
+      retval = 0;
+   if (p.options->elitism_count != 724)
+      retval = 0;
+   if (p.options->tracking_mode != PopulationOption::TrackingMode::TRACKING_MODE_LIVE)
+      retval = 0;
+   if (p.options->min_fitness_change != 2.54)
+      retval = 0;
+   if (p.options->max_fitness != 68.70)
+      retval = 0;
+   if (p.options->thread_count != std::thread::hardware_concurrency())
+      retval = 0;
+
+   if (p.time_elapsed != 0.0)
+      retval = 0;
+
+   if (p.generation != 0)
+      retval = 0;
+
+   if (p.generation_A.end != 23094)
+      retval = 0;
+
+   if (p.generation_A.length != 23104)
+      retval = 0;
+
+   if (p.generation_B.end != 23094)
+      retval = 0;
+
+   if (p.generation_B.length != 23104)
+      retval = 0;
+
+   if (p.curr_generation != &p.generation_A)
+      retval = 0;
+
+   if (p.next_generation != &p.generation_B)
+      retval = 0;
+
+   if (p.before.end != 0)
+      retval = 0;
+
+   if (p.before.data != 0)
+      retval = 0;
+
+   if (p.after.end != 0)
+      retval = 0;
+
+   if (p.after.data != 0)
+      retval = 0;
+
+   if (p.evolution != NULL)
+      retval = 0;
+
+   if (p.fitness != NULL)
+      retval = 0;
+
+   if (p.options->free_on_exit != 1)
+      retval = 0;
+
+   return retval;
+}
+
 }
 
